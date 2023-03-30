@@ -3,7 +3,7 @@
 ///
 /// In the future, the component model is expected to add built-in stream types;
 /// when it does, they are expected to subsume this API.
-default interface streams {
+default interface io-streams {
     use poll.poll.{pollable}
 
     /// An error type returned from a stream operation. Currently this
