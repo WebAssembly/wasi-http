@@ -73,6 +73,10 @@ default interface types {
   // a single `request` type (that uses the single `stream` type mentioned
   // above). The `consume` and `write` methods may only be called once (and
   // return failure thereafter).
+  // The streams returned by `consume` and `write` are owned by the request and
+  // response objects. The streams are destroyed when the request/response is
+  // dropped. The caller can also call drop on the stream before the
+  // request/response is dropped if they want to release resources earlier.
   type incoming-request = u32
   type outgoing-request = u32
   drop-incoming-request: func(request: incoming-request)
