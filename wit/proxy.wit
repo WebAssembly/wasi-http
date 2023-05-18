@@ -8,6 +8,8 @@ default world proxy {
   import monotonic-clock: clocks.monotonic-clock
   import timezone: clocks.timezone
   import random: random.random
+  import insecure-random: random.insecure
+  import insecure-random-seed: random.insecure-seed
 
   // This is the default logging handler to use when user code simply wants to
   // log to a developer-facing console (e.g., via `console.log()`).
