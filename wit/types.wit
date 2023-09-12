@@ -27,14 +27,65 @@ interface types {
     other(string)
   }
 
-  /// TODO: perhaps better align with HTTP semantics?
-  /// This type enumerates the different kinds of errors that may occur when
-  /// initially returning a response.
+  // The cases of this variant correspond to the IANA HTTP Proxy Error Types:
+  //   https://www.iana.org/assignments/http-proxy-status/http-proxy-status.xhtml#table-http-proxy-error-types
   variant error {
-    invalid-url(string),
-    timeout-error(string),
-    protocol-error(string),
-    unexpected-error(string)
+    DNS-timeout,
+    DNS-error(DNS-error-payload),
+    destination-not-found,
+    destination-unavailable,
+    destination-IP-prohibited,
+    destination-IP-unroutable,
+    connection-refused,
+    connection-terminated,
+    connection-timeout,
+    connection-read-timeout,
+    connection-write-timeout,
+    connection-limit-reached,
+    TLS-protocol-error,
+    TLS-certificate-error,
+    TLS-alert-received(TLS-alert-received-payload),
+    HTTP-request-error(HTTP-request-error-payload),
+    HTTP-request-denied,
+    HTTP-response-incomplete,
+    HTTP-response-header-section-size(u32),
+    HTTP-response-header-size(field-size-payload),
+    HTTP-response-body-size(u32),
+    HTTP-response-trailer-section-size(u32),
+    HTTP-response-trailer-size(field-size-payload),
+    HTTP-response-transfer-coding(string),
+    HTTP-response-content-coding(string),
+    HTTP-response-timeout,
+    HTTP-upgrade-failed,
+    HTTP-protocol-error,
+    proxy-internal-response,
+    proxy-internal-error,
+    proxy-configuration-error,
+    proxy-loop-detected
+  }
+
+  // Defines the case payload type for `DNS-error` above:
+  record DNS-error-payload {
+    rcode: string,
+    info-code: u16
+  }
+
+  // Defines the case payload type for `TLS-alert-received` above:
+  record TLS-alert-received-payload {
+    alert-ID: u8,
+    alert-message: string
+  }
+
+  // Defines the case payload type for `HTTP-request-error` above:
+  record HTTP-request-error-payload {
+    status-code: u16,
+    status-phrase: string
+  }
+
+  // Defines the case payload type for `HTTP-response-{header,trailer}-size` above:
+  record field-size-payload {
+    field-name: string,
+    field-size: u32
   }
 
   /// This type enumerates the different kinds of errors that may occur when
