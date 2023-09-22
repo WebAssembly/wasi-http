@@ -1,4 +1,8 @@
 <h1><a name="proxy">World proxy</a></h1>
+<p>The <code>wasi:http/proxy</code> world captures a widely-implementable intersection of
+hosts that includes HTTP forward and reverse proxies. Components targeting
+this world may concurrently stream in and out any number of incoming and
+outgoing HTTP requests.</p>
 <ul>
 <li>Imports:
 <ul>
@@ -166,7 +170,14 @@ reached.</p>
 <h4><a name="datetime"><code>type datetime</code></a></h4>
 <p><a href="#datetime"><a href="#datetime"><code>datetime</code></a></a></p>
 <p>
-#### <a name="timezone_display">`record timezone-display`</a>
+#### <a name="timezone">`type timezone`</a>
+`u32`
+<p>A timezone.
+<p>In timezones that recognize daylight saving time, also known as daylight
+time and summer time, the information returned from the functions varies
+over time to reflect these adjustments.</p>
+<p>This <a href="https://github.com/WebAssembly/WASI/blob/main/docs/WitInWasi.md#Resources">represents a resource</a>.</p>
+<h4><a name="timezone_display"><code>record timezone-display</code></a></h4>
 <p>Information useful for displaying the timezone of a specific <a href="#datetime"><code>datetime</code></a>.</p>
 <p>This information may vary within a single <a href="#timezone"><code>timezone</code></a> to reflect daylight
 saving time adjustments.</p>
@@ -198,13 +209,6 @@ representation of the UTC offset may be returned, such as <code>-04:00</code>.</
 should return false.</p>
 </li>
 </ul>
-<h4><a name="timezone"><code>type timezone</code></a></h4>
-<p><code>u32</code></p>
-<p>A timezone.
-<p>In timezones that recognize daylight saving time, also known as daylight
-time and summer time, the information returned from the functions varies
-over time to reflect these adjustments.</p>
-<p>This <a href="https://github.com/WebAssembly/WASI/blob/main/docs/WitInWasi.md#Resources">represents a resource</a>.</p>
 <hr />
 <h3>Functions</h3>
 <h4><a name="display"><code>display: func</code></a></h4>
@@ -284,7 +288,11 @@ when it does, they are expected to subsume this API.</p>
 <h4><a name="pollable"><code>type pollable</code></a></h4>
 <p><a href="#pollable"><a href="#pollable"><code>pollable</code></a></a></p>
 <p>
-#### <a name="stream_status">`enum stream-status`</a>
+#### <a name="stream_error">`record stream-error`</a>
+<p>An error type returned from a stream operation. Currently this
+doesn't provide any additional information.</p>
+<h5>Record Fields</h5>
+<h4><a name="stream_status"><code>enum stream-status</code></a></h4>
 <p>Streams provide a sequence of data and then end; once they end, they
 no longer provide any further data.</p>
 <p>For example, a stream reading from a file ends when the stream reaches
@@ -301,25 +309,6 @@ socket ends when the socket is closed.</p>
 <p>The stream has ended and will not produce any further data.
 </li>
 </ul>
-<h4><a name="stream_error"><code>record stream-error</code></a></h4>
-<p>An error type returned from a stream operation. Currently this
-doesn't provide any additional information.</p>
-<h5>Record Fields</h5>
-<h4><a name="output_stream"><code>type output-stream</code></a></h4>
-<p><code>u32</code></p>
-<p>An output bytestream. In the future, this will be replaced by handle
-types.
-<p>This conceptually represents a <code>stream&lt;u8, _&gt;</code>. It's temporary
-scaffolding until component-model's async features are ready.</p>
-<p><a href="#output_stream"><code>output-stream</code></a>s are <em>non-blocking</em> to the extent practical on
-underlying platforms. Except where specified otherwise, I/O operations also
-always return promptly, after the number of bytes that can be written
-promptly, which could even be zero. To wait for the stream to be ready to
-accept data, the <a href="#subscribe_to_output_stream"><code>subscribe-to-output-stream</code></a> function to obtain a
-<a href="#pollable"><code>pollable</code></a> which can be polled for using <code>wasi_poll</code>.</p>
-<p>And at present, it is a <code>u32</code> instead of being an actual handle, until
-the wit-bindgen implementation of handles and resources is ready.</p>
-<p>This <a href="https://github.com/WebAssembly/WASI/blob/main/docs/WitInWasi.md#Resources">represents a resource</a>.</p>
 <h4><a name="input_stream"><code>type input-stream</code></a></h4>
 <p><code>u32</code></p>
 <p>An input bytestream. In the future, this will be replaced by handle
@@ -332,6 +321,21 @@ promptly available than requested, they return the number of bytes promptly
 available, which could even be zero. To wait for data to be available,
 use the <a href="#subscribe_to_input_stream"><code>subscribe-to-input-stream</code></a> function to obtain a <a href="#pollable"><code>pollable</code></a> which
 can be polled for using <code>wasi_poll</code>.</p>
+<p>And at present, it is a <code>u32</code> instead of being an actual handle, until
+the wit-bindgen implementation of handles and resources is ready.</p>
+<p>This <a href="https://github.com/WebAssembly/WASI/blob/main/docs/WitInWasi.md#Resources">represents a resource</a>.</p>
+<h4><a name="output_stream"><code>type output-stream</code></a></h4>
+<p><code>u32</code></p>
+<p>An output bytestream. In the future, this will be replaced by handle
+types.
+<p>This conceptually represents a <code>stream&lt;u8, _&gt;</code>. It's temporary
+scaffolding until component-model's async features are ready.</p>
+<p><a href="#output_stream"><code>output-stream</code></a>s are <em>non-blocking</em> to the extent practical on
+underlying platforms. Except where specified otherwise, I/O operations also
+always return promptly, after the number of bytes that can be written
+promptly, which could even be zero. To wait for the stream to be ready to
+accept data, the <a href="#subscribe_to_output_stream"><code>subscribe-to-output-stream</code></a> function to obtain a
+<a href="#pollable"><code>pollable</code></a> which can be polled for using <code>wasi_poll</code>.</p>
 <p>And at present, it is a <code>u32</code> instead of being an actual handle, until
 the wit-bindgen implementation of handles and resources is ready.</p>
 <p>This <a href="https://github.com/WebAssembly/WASI/blob/main/docs/WitInWasi.md#Resources">represents a resource</a>.</p>
@@ -583,6 +587,9 @@ be used.</p>
 <li><a name="get_stdin.0"></a> <a href="#input_stream"><a href="#input_stream"><code>input-stream</code></a></a></li>
 </ul>
 <h2><a name="wasi:http_types">Import interface wasi:http/types</a></h2>
+<p>The <a href="#wasi:http_types"><code>wasi:http/types</code></a> interface is meant to be imported by components to
+define the HTTP resource types and operations used by the component's
+imported and exported interfaces.</p>
 <hr />
 <h3>Types</h3>
 <h4><a name="input_stream"><code>type input-stream</code></a></h4>
@@ -594,36 +601,8 @@ be used.</p>
 #### <a name="pollable">`type pollable`</a>
 [`pollable`](#pollable)
 <p>
-#### <a name="status_code">`type status-code`</a>
-`u16`
-<p>
-#### <a name="scheme">`variant scheme`</a>
-<h5>Variant Cases</h5>
-<ul>
-<li><a name="scheme.http"><code>HTTP</code></a></li>
-<li><a name="scheme.https"><code>HTTPS</code></a></li>
-<li><a name="scheme.other"><code>other</code></a>: <code>string</code></li>
-</ul>
-<h4><a name="response_outparam"><code>type response-outparam</code></a></h4>
-<p><code>u32</code></p>
-<p>
-#### <a name="request_options">`record request-options`</a>
-<h5>Record Fields</h5>
-<ul>
-<li><a name="request_options.connect_timeout_ms"><code>connect-timeout-ms</code></a>: option&lt;<code>u32</code>&gt;</li>
-<li><a name="request_options.first_byte_timeout_ms"><code>first-byte-timeout-ms</code></a>: option&lt;<code>u32</code>&gt;</li>
-<li><a name="request_options.between_bytes_timeout_ms"><code>between-bytes-timeout-ms</code></a>: option&lt;<code>u32</code>&gt;</li>
-</ul>
-<h4><a name="outgoing_stream"><code>type outgoing-stream</code></a></h4>
-<p><a href="#output_stream"><a href="#output_stream"><code>output-stream</code></a></a></p>
-<p>
-#### <a name="outgoing_response">`type outgoing-response`</a>
-`u32`
-<p>
-#### <a name="outgoing_request">`type outgoing-request`</a>
-`u32`
-<p>
 #### <a name="method">`variant method`</a>
+<p>This type corresponds to HTTP standard Methods.</p>
 <h5>Variant Cases</h5>
 <ul>
 <li><a name="method.get"><code>get</code></a></li>
@@ -637,34 +616,18 @@ be used.</p>
 <li><a name="method.patch"><code>patch</code></a></li>
 <li><a name="method.other"><code>other</code></a>: <code>string</code></li>
 </ul>
-<h4><a name="incoming_stream"><code>type incoming-stream</code></a></h4>
-<p><a href="#input_stream"><a href="#input_stream"><code>input-stream</code></a></a></p>
-<p>
-#### <a name="incoming_response">`type incoming-response`</a>
-`u32`
-<p>
-#### <a name="incoming_request">`type incoming-request`</a>
-`u32`
-<p>
-#### <a name="future_write_trailers_result">`type future-write-trailers-result`</a>
-`u32`
-<p>
-#### <a name="future_trailers">`type future-trailers`</a>
-`u32`
-<p>
-#### <a name="future_incoming_response">`type future-incoming-response`</a>
-`u32`
-<p>
-#### <a name="fields">`type fields`</a>
-`u32`
-<p>
-#### <a name="trailers">`type trailers`</a>
-[`fields`](#fields)
-<p>
-#### <a name="headers">`type headers`</a>
-[`fields`](#fields)
-<p>
-#### <a name="error">`variant error`</a>
+<h4><a name="scheme"><code>variant scheme</code></a></h4>
+<p>This type corresponds to HTTP standard Related Schemes.</p>
+<h5>Variant Cases</h5>
+<ul>
+<li><a name="scheme.http"><code>HTTP</code></a></li>
+<li><a name="scheme.https"><code>HTTPS</code></a></li>
+<li><a name="scheme.other"><code>other</code></a>: <code>string</code></li>
+</ul>
+<h4><a name="error"><code>variant error</code></a></h4>
+<p>TODO: perhaps better align with HTTP semantics?
+This type enumerates the different kinds of errors that may occur when
+initially returning a response.</p>
 <h5>Variant Cases</h5>
 <ul>
 <li><a name="error.invalid_url"><code>invalid-url</code></a>: <code>string</code></li>
@@ -672,6 +635,120 @@ be used.</p>
 <li><a name="error.protocol_error"><code>protocol-error</code></a>: <code>string</code></li>
 <li><a name="error.unexpected_error"><code>unexpected-error</code></a>: <code>string</code></li>
 </ul>
+<h4><a name="fields"><code>type fields</code></a></h4>
+<p><code>u32</code></p>
+<p>This following block defines the `fields` resource which corresponds to
+HTTP standard Fields. Soon, when resource types are added, the `type
+fields = u32` type alias can be replaced by a proper `resource fields`
+definition containing all the functions using the method syntactic sugar.
+<h4><a name="headers"><code>type headers</code></a></h4>
+<p><a href="#fields"><a href="#fields"><code>fields</code></a></a></p>
+<p>
+#### <a name="trailers">`type trailers`</a>
+[`fields`](#fields)
+<p>
+#### <a name="incoming_stream">`type incoming-stream`</a>
+[`input-stream`](#input_stream)
+<p>The following block defines stream types which corresponds to the HTTP
+standard Contents and Trailers. With Preview3, all of these fields can be
+replaced by a stream<u8, option<trailers>>. In the interim, we need to
+build on separate resource types defined by `wasi:io/streams`. The
+`finish-` functions emulate the stream's result value and MUST be called
+exactly once after the final read/write from/to the stream before dropping
+the stream. The optional `future-` types describe the asynchronous result of
+reading/writing the optional HTTP trailers and MUST be waited on and dropped
+to complete streaming the request/response.
+<h4><a name="outgoing_stream"><code>type outgoing-stream</code></a></h4>
+<p><a href="#output_stream"><a href="#output_stream"><code>output-stream</code></a></a></p>
+<p>
+#### <a name="future_trailers">`type future-trailers`</a>
+`u32`
+<p>The following block defines the `future-trailers` resource, which is
+returned when finishing an `incoming-stream` to asychronously produce the
+final trailers.
+<h4><a name="future_write_trailers_result"><code>type future-write-trailers-result</code></a></h4>
+<p><code>u32</code></p>
+<p>The following block defines the `future-write-trailers-result` resource,
+which is returned when finishing an `outgoing-stream` and asychronously
+indicates the success or failure of writing the trailers.
+<h4><a name="incoming_request"><code>type incoming-request</code></a></h4>
+<p><code>u32</code></p>
+<p>The following block defines the `incoming-request` and `outgoing-request`
+resource types that correspond to HTTP standard Requests. Soon, when
+resource types are added, the `u32` type aliases can be replaced by proper
+`resource` type definitions containing all the functions as methods.
+Later, Preview2 will allow both types to be merged together into a single
+`request` type (that uses the single `stream` type mentioned above). The
+`consume` and `write` methods may only be called once (and return failure
+thereafter). The `headers` and `trailers` passed into and out of requests
+are shared with the request, with all mutations visible to all uses.
+Components MUST avoid updating `headers` and `trailers` after passing a
+request that points to them to the outside world.
+The streams returned by `consume` and `write` are owned by the request and
+response objects. The streams are destroyed when the request/response is
+dropped, thus a client MUST drop any handle referring to a request/response stream
+before dropping the request/response or passing ownership of the request/response
+to the outside world. The caller can also call drop on the stream before the
+request/response is dropped if they want to release resources earlier.
+<h4><a name="outgoing_request"><code>type outgoing-request</code></a></h4>
+<p><code>u32</code></p>
+<p>
+#### <a name="request_options">`record request-options`</a>
+<p>Additional optional parameters that can be set when making a request.</p>
+<h5>Record Fields</h5>
+<ul>
+<li>
+<p><a name="request_options.connect_timeout_ms"><code>connect-timeout-ms</code></a>: option&lt;<code>u32</code>&gt;</p>
+<p>The following timeouts are specific to the HTTP protocol and work
+independently of the overall timeouts passed to `io.poll.poll-oneoff`.
+The timeout for the initial connect.
+</li>
+<li>
+<p><a name="request_options.first_byte_timeout_ms"><code>first-byte-timeout-ms</code></a>: option&lt;<code>u32</code>&gt;</p>
+<p>The timeout for receiving the first byte of the response body.
+</li>
+<li>
+<p><a name="request_options.between_bytes_timeout_ms"><code>between-bytes-timeout-ms</code></a>: option&lt;<code>u32</code>&gt;</p>
+<p>The timeout for receiving the next chunk of bytes in the response body
+stream.
+</li>
+</ul>
+<h4><a name="response_outparam"><code>type response-outparam</code></a></h4>
+<p><code>u32</code></p>
+<p>The following block defines a special resource type used by the
+`wasi:http/incoming-handler` interface. When resource types are added, this
+block can be replaced by a proper `resource response-outparam { ... }`
+definition. Later, with Preview3, the need for an outparam goes away entirely
+(the `wasi:http/handler` interface used for both incoming and outgoing can
+simply return a `stream`).
+<h4><a name="status_code"><code>type status-code</code></a></h4>
+<p><code>u16</code></p>
+<p>This type corresponds to the HTTP standard Status Code.
+<h4><a name="incoming_response"><code>type incoming-response</code></a></h4>
+<p><code>u32</code></p>
+<p>The following block defines the `incoming-response` and `outgoing-response`
+resource types that correspond to HTTP standard Responses. Soon, when
+resource types are added, the `u32` type aliases can be replaced by proper
+`resource` type definitions containing all the functions as methods. Later,
+Preview2 will allow both types to be merged together into a single `response`
+type (that uses the single `stream` type mentioned above). The `consume` and
+`write` methods may only be called once (and return failure thereafter).
+The `headers` and `trailers` passed into and out of responses are shared
+with the response, with all mutations visible to all uses. Components MUST
+avoid updating `headers` and `trailers` after passing a response that
+points to them to the outside world.
+<h4><a name="outgoing_response"><code>type outgoing-response</code></a></h4>
+<p><code>u32</code></p>
+<p>
+#### <a name="future_incoming_response">`type future-incoming-response`</a>
+`u32`
+<p>The following block defines a special resource type used by the
+`wasi:http/outgoing-handler` interface to emulate
+`future<result<response, error>>` in advance of Preview3. Given a
+`future-incoming-response`, the client can call the non-blocking `get`
+method to get the result if it is available. If the result is not available,
+the client can call `listen` to get a `pollable` that can be passed to
+`io.poll.poll-oneoff`.
 <hr />
 <h3>Functions</h3>
 <h4><a name="drop_fields"><code>drop-fields: func</code></a></h4>
@@ -987,6 +1064,11 @@ be used.</p>
 <li><a name="listen_to_future_incoming_response.0"></a> <a href="#pollable"><a href="#pollable"><code>pollable</code></a></a></li>
 </ul>
 <h2><a name="wasi:http_outgoing_handler">Import interface wasi:http/outgoing-handler</a></h2>
+<p>The <a href="#wasi:http_outgoing_handler"><code>wasi:http/outgoing-handler</code></a> interface is meant to be imported by
+components and implemented by the host.</p>
+<p>NOTE: in Preview3, this interface will be merged with
+<a href="#wasi:http_outgoing_handler"><code>wasi:http/outgoing-handler</code></a> into a single <code>wasi:http/handler</code> interface
+that takes a <code>request</code> parameter and returns a <code>response</code> result.</p>
 <hr />
 <h3>Types</h3>
 <h4><a name="outgoing_request"><code>type outgoing-request</code></a></h4>
@@ -1001,6 +1083,9 @@ be used.</p>
 ----
 <h3>Functions</h3>
 <h4><a name="handle"><code>handle: func</code></a></h4>
+<p>The parameter and result types of the <a href="#handle"><code>handle</code></a> function allow the caller
+to concurrently stream the bodies of the outgoing request and the incoming
+response.</p>
 <h5>Params</h5>
 <ul>
 <li><a name="handle.request"><code>request</code></a>: <a href="#outgoing_request"><a href="#outgoing_request"><code>outgoing-request</code></a></a></li>
@@ -1022,6 +1107,16 @@ be used.</p>
 ----
 <h3>Functions</h3>
 <h4><a name="handle"><code>handle: func</code></a></h4>
+<p>The <a href="#handle"><code>handle</code></a> function takes an outparam instead of returning its response
+so that the component may stream its response while streaming any other
+request or response bodies. The callee MUST write a response to the
+<code>response-out</code> and then finish the response before returning. The caller
+is expected to start streaming the response once <a href="#set_response_outparam"><code>set-response-outparam</code></a>
+is called and finish streaming the response when <a href="#drop_response_outparam"><code>drop-response-outparam</code></a>
+is called. The <a href="#handle"><code>handle</code></a> function is then allowed to continue executing
+any post-response logic before returning. While this post-response
+execution is taken off the critical path, since there is no return value,
+there is no way to report its success or failure.</p>
 <h5>Params</h5>
 <ul>
 <li><a name="handle.request"><code>request</code></a>: <a href="#incoming_request"><a href="#incoming_request"><code>incoming-request</code></a></a></li>
