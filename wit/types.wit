@@ -3,7 +3,7 @@
 // imported and exported interfaces.
 interface types {
   use wasi:io/streams.{input-stream, output-stream}
-  use wasi:poll/poll.{pollable}
+  use wasi:io/poll.{pollable}
   
   // This type corresponds to HTTP standard Methods.
   variant method {
