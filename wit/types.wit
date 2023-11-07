@@ -92,12 +92,11 @@ interface types {
 
     /// Delete all values for a key. Does nothing if no values for the key
     /// exist.
-    delete: func(name: field-key);
+    delete: func(name: field-key) -> result<_, header-error>;
 
     /// Append a value for a key. Does not change or delete any existing
     /// values for that key.
     append: func(name: field-key, value: field-value) -> result<_, header-error>;
-
 
     /// Retrieve the full set of keys and values in the Fields. Like the
     /// constructor, the list represents each key-value pair. 
