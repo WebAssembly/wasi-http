@@ -27,7 +27,7 @@ interface types {
     other(string)
   }
 
-  /// The cases of this variant correspond to the IANA HTTP Proxy Error Types:
+  /// These cases are inspired by the IANA HTTP Proxy Error Types:
   ///   https://www.iana.org/assignments/http-proxy-status/http-proxy-status.xhtml#table-http-proxy-error-types
   variant error-code {
     DNS-timeout,
@@ -47,14 +47,18 @@ interface types {
     TLS-alert-received(TLS-alert-received-payload),
     HTTP-request-denied,
     HTTP-request-length-required,
-    HTTP-request-content-too-large,
+    HTTP-request-body-size(option<u64>),
+    HTTP-request-method-invalid,
+    HTTP-request-URI-invalid,
     HTTP-request-URI-too-long,
     HTTP-request-header-section-size(option<u32>),
     HTTP-request-header-size(option<field-size-payload>),
+    HTTP-request-trailer-section-size(option<u32>),
+    HTTP-request-trailer-size(field-size-payload),
     HTTP-response-incomplete,
     HTTP-response-header-section-size(option<u32>),
     HTTP-response-header-size(field-size-payload),
-    HTTP-response-body-size(option<u32>),
+    HTTP-response-body-size(option<u64>),
     HTTP-response-trailer-section-size(option<u32>),
     HTTP-response-trailer-size(field-size-payload),
     HTTP-response-transfer-coding(option<string>),
@@ -62,10 +66,14 @@ interface types {
     HTTP-response-timeout,
     HTTP-upgrade-failed,
     HTTP-protocol-error,
-    proxy-internal-response,
-    proxy-internal-error,
-    proxy-configuration-error,
-    proxy-loop-detected
+    loop-detected,
+    configuration-error,
+    /// This is a catch-all error for anything that doesn't fit cleanly into a
+    /// more specific case. It also includes an optional string for an
+    /// unstructured description of the error. Users should not depend on the
+    /// string for diagnosing errors, as it's not required to be consistent
+    /// between implementations.
+    internal-error(option<string>)
   }
 
   /// Defines the case payload type for `DNS-error` above:
@@ -76,7 +84,7 @@ interface types {
 
   /// Defines the case payload type for `TLS-alert-received` above:
   record TLS-alert-received-payload {
-    alert-ID: option<u8>,
+    alert-id: option<u8>,
     alert-message: option<string>
   }
 
