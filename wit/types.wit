@@ -515,7 +515,7 @@ interface types {
 
     /// Finalize an outgoing body, optionally providing trailers. This must be
     /// called to signal that the response is complete. If the `outgoing-body`
-    /// is dropped without calling `outgoing-body.finalize`, the implementation
+    /// is dropped without calling `outgoing-body.finish`, the implementation
     /// should treat the body as corrupted.
     ///
     /// Fails if the body's `outgoing-request` or `outgoing-response` was
