@@ -306,6 +306,11 @@ interface types {
     /// `outgoing-request` is dropped, or its ownership is transfered to
     /// another component by e.g. `outgoing-handler.handle`.
     headers: func() -> headers;
+
+    /// Takes ownership of `outgoing-request`, and returns an `incoming-request`.
+    /// This allows guests to invoke `incoming-handler.handle` on other components.
+    /// This function will trap if the `headers` child is still alive.
+    into-incoming-request: static func(this: outgoing-request) -> incoming-request;
   }
 
   /// Parameters for making an HTTP Request. Each of these parameters is

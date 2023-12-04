@@ -1032,6 +1032,18 @@ another component by e.g. <code>outgoing-handler.handle</code>.</p>
 <ul>
 <li><a name="method_outgoing_request.headers.0"></a> own&lt;<a href="#headers"><a href="#headers"><code>headers</code></a></a>&gt;</li>
 </ul>
+<h4><a name="static_outgoing_request.into_incoming_request"><code>[static]outgoing-request.into-incoming-request: func</code></a></h4>
+<p>Takes ownership of <a href="#outgoing_request"><code>outgoing-request</code></a>, and returns an <a href="#incoming_request"><code>incoming-request</code></a>.
+This allows guests to invoke <code>incoming-handler.handle</code> on other components.
+This function will trap if the <a href="#headers"><code>headers</code></a> child is still alive.</p>
+<h5>Params</h5>
+<ul>
+<li><a name="static_outgoing_request.into_incoming_request.this"><code>this</code></a>: own&lt;<a href="#outgoing_request"><a href="#outgoing_request"><code>outgoing-request</code></a></a>&gt;</li>
+</ul>
+<h5>Return values</h5>
+<ul>
+<li><a name="static_outgoing_request.into_incoming_request.0"></a> own&lt;<a href="#incoming_request"><a href="#incoming_request"><code>incoming-request</code></a></a>&gt;</li>
+</ul>
 <h4><a name="constructor_request_options"><code>[constructor]request-options: func</code></a></h4>
 <p>Construct a default <a href="#request_options"><code>request-options</code></a> value.</p>
 <h5>Return values</h5>
