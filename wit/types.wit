@@ -169,7 +169,10 @@ interface types {
       entries: list<tuple<field-key,field-value>>
     ) -> result<fields, header-error>;
 
-    /// Get all of the values corresponding to a key.
+    /// Get all of the values corresponding to a key. If the key is not present
+    /// in this `fields`, an empty list is returned. However, if the key is
+    /// present but empty, this is represented by a list with one more more
+    /// empty field-values present.
     get: func(name: field-key) -> list<field-value>;
 
     /// Returns `true` when the key is present in this `fields`. If the key is
