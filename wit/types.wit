@@ -229,8 +229,8 @@ interface types {
     /// Construct a new `request` with a default `method` of `GET`, and
     /// `none` values for `path-with-query`, `scheme`, and `authority`.
     ///
-    /// * `body` is the contents of the body, as a stream of bytes.
     /// * `headers` is the HTTP Headers for the Response.
+    /// * `body` is the contents of the body, as a stream of bytes.
     /// * `trailers` is a `future` which resolves to the HTTP Trailers for the
     ///   Response.
     /// * `options` is optional `request-options` to be used if the request is
@@ -242,8 +242,8 @@ interface types {
     /// It is the obligation of the `handler.handle` implementation
     /// to reject invalid constructions of `request`.
     constructor(
-      body: stream<u8>,
       headers: headers,
+      body: stream<u8>,
       trailers: future<trailers>,
       options: option<request-options>
     );
@@ -367,13 +367,13 @@ interface types {
     /// different `status-code` is needed, it must be set via the
     /// `set-status-code` method.
     ///
-    /// * `body` is the contents of the body, as a stream of bytes.
     /// * `headers` is the HTTP Headers for the Response.
+    /// * `body` is the contents of the body, as a stream of bytes.
     /// * `trailers` is a `future` which resolves to the HTTP Trailers for the
     ///   Response.
     constructor(
-      body: stream<u8>,
       headers: headers,
+      body: stream<u8>,
       trailers: future<trailers>
     );
 
