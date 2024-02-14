@@ -229,7 +229,12 @@ interface types {
     /// Construct a new `request` with a default `method` of `GET`, and
     /// `none` values for `path-with-query`, `scheme`, and `authority`.
     ///
-    /// * `headers` is the HTTP Headers for the Request.
+    /// * `body` is the contents of the body, as a stream of bytes.
+    /// * `headers` is the HTTP Headers for the Response.
+    /// * `trailers` is a `future` which resolves to the HTTP Trailers for the
+    ///   Response.
+    /// * `options` is optional `request-options` to be used if the request is
+    ///   sent over a network connection.
     ///
     /// It is possible to construct, or manipulate with the accessor functions
     /// below, an `request` with an invalid combination of `scheme`
@@ -237,18 +242,11 @@ interface types {
     /// It is the obligation of the `handler.handle` implementation
     /// to reject invalid constructions of `request`.
     constructor(
-      body: body,
+      body: stream<u8>,
       headers: headers,
-      trailers: option<future<trailers>>,
+      trailers: future<trailers>,
       options: option<request-options>
     );
-
-    /// Returns the resource corresponding to the Body for this Request.
-    ///
-    /// Returns success on the first call: the `body` resource for this
-    /// `request` can be retrieved at most once. Subsequent calls will return
-    /// error.
-    body: func() -> result<body>;
 
     /// Get the Method for the Request.
     method: func() -> method;
@@ -301,6 +299,26 @@ interface types {
     /// `request` is dropped, or its ownership is transfered to another
     /// component by e.g. `handler.handle`.
     headers: func() -> headers;
+
+    /// Returns the contents of the body, as a stream of bytes.
+    ///
+    /// The returned `stream` is a child: it must be dropped before the parent
+    /// `request` is dropped, or consumed by `request.finish`.
+    ///
+    /// This invariant ensures that the implementation can determine whether the
+    /// user is consuming the contents of the body, waiting on the trailers to
+    /// be ready, or neither. This allows for network backpressure is to be
+    /// applied when the user is consuming the body, and for that backpressure
+    /// to not inhibit delivery of the trailers if the user does not read the
+    /// entire body.
+    ///
+    /// This function may be called multiple times as long as any `stream`s
+    /// returned by previous calls have been dropped first.
+    body: func() -> result<stream<u8>>;
+
+    /// Takes ownership of `request`, and returns a `trailers`.  This function will
+    /// trap if a `stream` child is still alive.
+    finish: static func(this: request) -> trailers;
   }
 
   /// Parameters for making an HTTP Request. Each of these parameters is
@@ -342,37 +360,6 @@ interface types {
   /// This type corresponds to the HTTP standard Status Code.
   type status-code = u16;
 
-  /// Represents an HTTP Request or Response's Body.
-  ///
-  /// A body has both its contents - a stream of bytes - and a (possibly empty)
-  /// set of trailers, indicating that the full contents of the body have been
-  /// received. This resource represents the contents as an `stream` and the
-  /// delivery of trailers as a `trailers`, and ensures that the user of this
-  /// interface may only be consuming either the body contents or retrieving
-  /// trailers at any given time.
-  resource body {
-
-    /// Returns the contents of the body, as a stream of bytes.
-    ///
-    /// Returns success on first call: the stream representing the contents
-    /// can be retrieved at most once. Subsequent calls will return error.
-    ///
-    /// The returned `stream` is a child: it must be dropped before the parent
-    /// `body` is dropped, or consumed by `body.finish`.
-    ///
-    /// This invariant ensures that the implementation can determine whether the
-    /// user is consuming the contents of the body, waiting on the trailers to
-    /// be ready, or neither. This allows for network backpressure is to be
-    /// applied when the user is consuming the body, and for that backpressure
-    /// to not inhibit delivery of the trailers if the user does not read the
-    /// entire body.
-    %stream: func() -> result<stream<u8>>;
-
-    /// Takes ownership of `body`, and returns a `trailers`.  This function will
-    /// trap if the `stream` child is still alive.
-    finish: static func(this: body) -> trailers;
-  }
-
   /// Represents an HTTP Response.
   resource response {
 
@@ -380,11 +367,14 @@ interface types {
     /// different `status-code` is needed, it must be set via the
     /// `set-status-code` method.
     ///
+    /// * `body` is the contents of the body, as a stream of bytes.
     /// * `headers` is the HTTP Headers for the Response.
+    /// * `trailers` is a `future` which resolves to the HTTP Trailers for the
+    ///   Response.
     constructor(
-      body: body,
+      body: stream<u8>,
       headers: headers,
-      trailers: option<future<trailers>>
+      trailers: future<trailers>
     );
 
     /// Get the HTTP Status Code for the Response.
@@ -404,11 +394,24 @@ interface types {
     /// component by e.g. `handler.handle`.
     headers: func() -> headers;
 
-    /// Returns the resource corresponding to the Body for this Response.
+    /// Returns the contents of the body, as a stream of bytes.
     ///
-    /// Returns success on the first call: the `body` resource for this
-    /// `response` can be retrieved at most once. Subsequent calls will return
-    /// error.
-    body: func() -> result<body>;
+    /// The returned `stream` is a child: it must be dropped before the parent
+    /// `response` is dropped, or consumed by `response.finish`.
+    ///
+    /// This invariant ensures that the implementation can determine whether the
+    /// user is consuming the contents of the body, waiting on the trailers to
+    /// be ready, or neither. This allows for network backpressure is to be
+    /// applied when the user is consuming the body, and for that backpressure
+    /// to not inhibit delivery of the trailers if the user does not read the
+    /// entire body.
+    ///
+    /// This function may be called multiple times as long as any `stream`s
+    /// returned by previous calls have been dropped first.
+    body: func() -> result<stream<u8>>;
+
+    /// Takes ownership of `response`, and returns a `trailers`.  This function will
+    /// trap if a `stream` child is still alive.
+    finish: static func(this: response) -> trailers;
   }
 }
