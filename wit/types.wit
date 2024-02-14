@@ -231,8 +231,8 @@ interface types {
     ///
     /// * `headers` is the HTTP Headers for the Response.
     /// * `body` is the contents of the body, as a stream of bytes.
-    /// * `trailers` is a `future` which resolves to the HTTP Trailers for the
-    ///   Response.
+    /// * `trailers` is an optional `future` which resolves to the HTTP Trailers
+    ///   for the Response.
     /// * `options` is optional `request-options` to be used if the request is
     ///   sent over a network connection.
     ///
@@ -244,7 +244,7 @@ interface types {
     constructor(
       headers: headers,
       body: stream<u8>,
-      trailers: future<trailers>,
+      trailers: option<future<trailers>>,
       options: option<request-options>
     );
 
@@ -318,14 +318,14 @@ interface types {
 
     /// Takes ownership of `request`, and returns a `trailers`.  This function will
     /// trap if a `stream` child is still alive.
-    finish: static func(this: request) -> trailers;
+    finish: static func(this: request) -> result<option<trailers>, error-code>;
   }
 
   /// Parameters for making an HTTP Request. Each of these parameters is
   /// currently an optional timeout applicable to the transport layer of the
   /// HTTP protocol.
   ///
-  /// These timeouts are separate from any the user may use to bound a an
+  /// These timeouts are separate from any the user may use to bound an
   /// asynchronous call.
   resource request-options {
     /// Construct a default `request-options` value.
@@ -369,12 +369,12 @@ interface types {
     ///
     /// * `headers` is the HTTP Headers for the Response.
     /// * `body` is the contents of the body, as a stream of bytes.
-    /// * `trailers` is a `future` which resolves to the HTTP Trailers for the
-    ///   Response.
+    /// * `trailers` is an optional `future` which resolves to the HTTP Trailers
+    ///   for the Response.
     constructor(
       headers: headers,
       body: stream<u8>,
-      trailers: future<trailers>
+      trailers: option<future<trailers>>
     );
 
     /// Get the HTTP Status Code for the Response.
@@ -412,6 +412,6 @@ interface types {
 
     /// Takes ownership of `response`, and returns a `trailers`.  This function will
     /// trap if a `stream` child is still alive.
-    finish: static func(this: response) -> trailers;
+    finish: static func(this: response) -> result<option<trailers>, error-code>;
   }
 }
