@@ -1,4 +1,4 @@
-package wasi:http@0.2.0;
+package wasi:http@0.3.0-draft-2024-02-14;
 
 /// The `wasi:http/imports` world imports all the APIs for HTTP proxies.
 /// It is intended to be `include`d in other worlds.
@@ -20,7 +20,10 @@ world imports {
 
   /// This is the default handler to use when user code simply wants to make an
   /// HTTP request (e.g., via `fetch()`).
-  import outgoing-handler;
+  ///
+  /// This may also be used to pass synthesized or forwarded requests to another
+  /// component.
+  import handler;
 }
 
 /// The `wasi:http/proxy` world captures a widely-implementable intersection of
@@ -34,5 +37,8 @@ world proxy {
   /// `handle` function of this exported interface. A host may arbitrarily reuse
   /// or not reuse component instance when delivering incoming HTTP requests and
   /// thus a component must be able to handle 0..N calls to `handle`.
-  export incoming-handler;
+  ///
+  /// This may also be used to receive synthesized or forwarded requests from
+  /// another component.
+  export handler;
 }
