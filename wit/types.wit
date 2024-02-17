@@ -242,6 +242,11 @@ interface types {
     /// `incoming-request` before all children are dropped will trap.
     headers: func() -> headers;
 
+    /// Gives the `headers` associated with this request as an owned resource.
+    /// Will only return success at most once, and subsequent calls will return
+    /// error.
+    take-headers: func() -> result<headers>;
+
     /// Gives the `incoming-body` associated with this request. Will only
     /// return success at most once, and subsequent calls will return error.
     consume: func() -> result<incoming-body>;
@@ -392,6 +397,11 @@ interface types {
     /// Returns the incoming body. May be called at most once. Returns error
     /// if called additional times.
     consume: func() -> result<incoming-body>;
+
+    /// Returns the `headers` associated with this response as an owned
+    /// resource. Will only return success at most once, and subsequent calls
+    /// will return error.
+    take-headers: func() -> result<headers>;
   }
 
   /// Represents an incoming HTTP Request or Response's Body.

@@ -971,6 +971,18 @@ the parent <a href="#incoming_request"><code>incoming-request</code></a> is drop
 <ul>
 <li><a name="method_incoming_request.headers.0"></a> own&lt;<a href="#headers"><a href="#headers"><code>headers</code></a></a>&gt;</li>
 </ul>
+<h4><a name="method_incoming_request.take_headers"></a><code>[method]incoming-request.take-headers: func</code></h4>
+<p>Gives the <a href="#headers"><code>headers</code></a> associated with this request as an owned resource.
+Will only return success at most once, and subsequent calls will return
+error.</p>
+<h5>Params</h5>
+<ul>
+<li><a name="method_incoming_request.take_headers.self"></a><code>self</code>: borrow&lt;<a href="#incoming_request"><a href="#incoming_request"><code>incoming-request</code></a></a>&gt;</li>
+</ul>
+<h5>Return values</h5>
+<ul>
+<li><a name="method_incoming_request.take_headers.0"></a> result&lt;own&lt;<a href="#headers"><a href="#headers"><code>headers</code></a></a>&gt;&gt;</li>
+</ul>
 <h4><a name="method_incoming_request.consume"></a><code>[method]incoming-request.consume: func</code></h4>
 <p>Gives the <a href="#incoming_body"><code>incoming-body</code></a> associated with this request. Will only
 return success at most once, and subsequent calls will return error.</p>
@@ -1240,6 +1252,7 @@ implementation determine how to respond with an HTTP error response.</p>
 <h4><a name="method_incoming_response.consume"></a><code>[method]incoming-response.consume: func</code></h4>
 <p>Returns the incoming body. May be called at most once. Returns error
 if called additional times.</p>
+<p>Deprecated in favor of <code>into-parts</code>.</p>
 <h5>Params</h5>
 <ul>
 <li><a name="method_incoming_response.consume.self"></a><code>self</code>: borrow&lt;<a href="#incoming_response"><a href="#incoming_response"><code>incoming-response</code></a></a>&gt;</li>
@@ -1247,6 +1260,18 @@ if called additional times.</p>
 <h5>Return values</h5>
 <ul>
 <li><a name="method_incoming_response.consume.0"></a> result&lt;own&lt;<a href="#incoming_body"><a href="#incoming_body"><code>incoming-body</code></a></a>&gt;&gt;</li>
+</ul>
+<h4><a name="method_incoming_response.take_headers"></a><code>[method]incoming-response.take-headers: func</code></h4>
+<p>Returns the <a href="#headers"><code>headers</code></a> associated with this response as an owned
+resource. Will only return success at most once, and subsequent calls
+will return error.</p>
+<h5>Params</h5>
+<ul>
+<li><a name="method_incoming_response.take_headers.self"></a><code>self</code>: borrow&lt;<a href="#incoming_response"><a href="#incoming_response"><code>incoming-response</code></a></a>&gt;</li>
+</ul>
+<h5>Return values</h5>
+<ul>
+<li><a name="method_incoming_response.take_headers.0"></a> result&lt;own&lt;<a href="#headers"><a href="#headers"><code>headers</code></a></a>&gt;&gt;</li>
 </ul>
 <h4><a name="method_incoming_body.stream"></a><code>[method]incoming-body.stream: func</code></h4>
 <p>Returns the contents of the body, as a stream of bytes.</p>
