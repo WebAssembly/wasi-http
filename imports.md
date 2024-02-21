@@ -1252,7 +1252,6 @@ implementation determine how to respond with an HTTP error response.</p>
 <h4><a name="method_incoming_response.consume"></a><code>[method]incoming-response.consume: func</code></h4>
 <p>Returns the incoming body. May be called at most once. Returns error
 if called additional times.</p>
-<p>Deprecated in favor of <code>into-parts</code>.</p>
 <h5>Params</h5>
 <ul>
 <li><a name="method_incoming_response.consume.self"></a><code>self</code>: borrow&lt;<a href="#incoming_response"><a href="#incoming_response"><code>incoming-response</code></a></a>&gt;</li>
