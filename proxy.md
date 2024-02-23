@@ -10,18 +10,18 @@ outgoing HTTP requests.</p>
 <li>interface <a href="#wasi:clocks_monotonic_clock_0.2.0"><code>wasi:clocks/monotonic-clock@0.2.0</code></a></li>
 <li>interface <a href="#wasi:io_error_0.2.0"><code>wasi:io/error@0.2.0</code></a></li>
 <li>interface <a href="#wasi:io_streams_0.2.0"><code>wasi:io/streams@0.2.0</code></a></li>
-<li>interface <a href="#wasi:http_types_0.2.0"><code>wasi:http/types@0.2.0</code></a></li>
+<li>interface <a href="#wasi:http_types_0.2.1_draft"><code>wasi:http/types@0.2.1-draft</code></a></li>
 <li>interface <a href="#wasi:random_random_0.2.0"><code>wasi:random/random@0.2.0</code></a></li>
 <li>interface <a href="#wasi:cli_stdout_0.2.0"><code>wasi:cli/stdout@0.2.0</code></a></li>
 <li>interface <a href="#wasi:cli_stderr_0.2.0"><code>wasi:cli/stderr@0.2.0</code></a></li>
 <li>interface <a href="#wasi:cli_stdin_0.2.0"><code>wasi:cli/stdin@0.2.0</code></a></li>
-<li>interface <a href="#wasi:http_outgoing_handler_0.2.0"><code>wasi:http/outgoing-handler@0.2.0</code></a></li>
+<li>interface <a href="#wasi:http_outgoing_handler_0.2.1_draft"><code>wasi:http/outgoing-handler@0.2.1-draft</code></a></li>
 <li>interface <a href="#wasi:clocks_wall_clock_0.2.0"><code>wasi:clocks/wall-clock@0.2.0</code></a></li>
 </ul>
 </li>
 <li>Exports:
 <ul>
-<li>interface <a href="#wasi:http_incoming_handler_0.2.0"><code>wasi:http/incoming-handler@0.2.0</code></a></li>
+<li>interface <a href="#wasi:http_incoming_handler_0.2.1_draft"><code>wasi:http/incoming-handler@0.2.1-draft</code></a></li>
 </ul>
 </li>
 </ul>
@@ -496,7 +496,7 @@ is ready for reading, before performing the <code>splice</code>.</p>
 <ul>
 <li><a name="method_output_stream.blocking_splice.0"></a> result&lt;<code>u64</code>, <a href="#stream_error"><a href="#stream_error"><code>stream-error</code></a></a>&gt;</li>
 </ul>
-<h2><a name="wasi:http_types_0.2.0"></a>Import interface wasi:http/types@0.2.0</h2>
+<h2><a name="wasi:http_types_0.2.1_draft"></a>Import interface wasi:http/types@0.2.1-draft</h2>
 <p>This interface defines all of the types and methods for implementing
 HTTP Requests and Responses, both incoming and outgoing, as well as
 their headers, trailers, and bodies.</p>
@@ -1478,7 +1478,7 @@ represented as a <code>u64</code>.</p>
 <ul>
 <li><a name="get_stdin.0"></a> own&lt;<a href="#input_stream"><a href="#input_stream"><code>input-stream</code></a></a>&gt;</li>
 </ul>
-<h2><a name="wasi:http_outgoing_handler_0.2.0"></a>Import interface wasi:http/outgoing-handler@0.2.0</h2>
+<h2><a name="wasi:http_outgoing_handler_0.2.1_draft"></a>Import interface wasi:http/outgoing-handler@0.2.1-draft</h2>
 <p>This interface defines a handler of outgoing HTTP Requests. It should be
 imported by components which wish to make HTTP Requests.</p>
 <hr />
@@ -1556,7 +1556,7 @@ also known as <a href="https://en.wikipedia.org/wiki/Unix_time">Unix Time</a>.</
 <ul>
 <li><a name="resolution.0"></a> <a href="#datetime"><a href="#datetime"><code>datetime</code></a></a></li>
 </ul>
-<h2><a name="wasi:http_incoming_handler_0.2.0"></a>Export interface wasi:http/incoming-handler@0.2.0</h2>
+<h2><a name="wasi:http_incoming_handler_0.2.1_draft"></a>Export interface wasi:http/incoming-handler@0.2.1-draft</h2>
 <hr />
 <h3>Types</h3>
 <h4><a name="incoming_request"></a><code>type incoming-request</code></h4>
