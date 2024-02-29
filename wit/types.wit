@@ -2,6 +2,7 @@
 /// Requests and Responses, as well as their headers, trailers, and bodies.
 interface types {
   use wasi:clocks/monotonic-clock@0.2.0.{duration};
+  use wasi:io/error@0.2.0.{error};
 
   /// This type corresponds to HTTP standard Methods.
   variant method {
@@ -119,7 +120,7 @@ interface types {
     /// permitted because the fields are immutable.
     immutable,
   }
-  
+
   /// This type enumerates the different kinds of errors that may occur when
   /// setting fields of a `request-options` resource.
   variant request-options-error {
@@ -280,7 +281,7 @@ interface types {
     /// not a syntactically valid uri authority.
     set-authority: func(authority: option<string>) -> result;
 
-    /// Set the `request-options` to be associated with this request
+    /// Get the `request-options` to be associated with this request
     ///
     /// The returned `request-options` resource is immutable: `set-*` operations
     /// will fail if invoked.
@@ -288,7 +289,7 @@ interface types {
     /// This `request-options` resource is a child: it must be dropped before
     /// the parent `request` is dropped, or its ownership is transfered to
     /// another component by e.g. `handler.handle`.
-    set-options: func(options: option<request-options>);
+    options: func() -> option<request-options>;
 
     /// Get the headers associated with the Request.
     ///
