@@ -240,6 +240,9 @@ interface types {
       trailers: option<future<trailers>>
     );
 
+    /// Construct a new `body` with an empty stream and no trailers.
+    empty: static func() -> body;
+
     /// Returns the contents of the body, as a stream of bytes.
     ///
     /// This function may be called multiple times as long as any `stream`s
