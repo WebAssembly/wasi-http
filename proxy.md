@@ -600,6 +600,7 @@ https://www.iana.org/assignments/http-proxy-status/http-proxy-status.xhtml#table
 <li><a name="error_code.http_response_transfer_coding"></a><code>HTTP-response-transfer-coding</code>: option&lt;<code>string</code>&gt;</li>
 <li><a name="error_code.http_response_content_coding"></a><code>HTTP-response-content-coding</code>: option&lt;<code>string</code>&gt;</li>
 <li><a name="error_code.http_response_timeout"></a><code>HTTP-response-timeout</code></li>
+<li><a name="error_code.http_response_status_invalid"></a><code>HTTP-response-status-invalid</code></li>
 <li><a name="error_code.http_upgrade_failed"></a><code>HTTP-upgrade-failed</code></li>
 <li><a name="error_code.http_protocol_error"></a><code>HTTP-protocol-error</code></li>
 <li><a name="error_code.loop_detected"></a><code>loop-detected</code></li>
