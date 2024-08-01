@@ -233,8 +233,11 @@ interface types {
     /// The outer list represents each key-value pair in the Fields. Keys
     /// which have multiple values are represented by multiple entries in this
     /// list with the same key.
+    ///
+    /// Returned field keys do not include leading or trailing whitespace
+    /// characters 0x0a, 0x0d, 0x09 and 0x20.
     @since(version = 0.2.0)
-    entries: func() -> list<tuple<field-key,field-value>>;
+    entries: func() -> list<tuple<field-key, field-value>>;
 
     /// Make a deep copy of the Fields. Equivalent in behavior to calling the
     /// `fields` constructor on the return value of `entries`. The resulting
