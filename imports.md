@@ -943,6 +943,8 @@ constructor, the list represents each key-value pair.</p>
 <p>The outer list represents each key-value pair in the Fields. Keys
 which have multiple values are represented by multiple entries in this
 list with the same key.</p>
+<p>Returned field keys do not include leading or trailing whitespace
+characters 0x0a, 0x0d, 0x09 and 0x20.</p>
 <h5>Params</h5>
 <ul>
 <li><a name="method_fields_entries.self"></a><code>self</code>: borrow&lt;<a href="#fields"><a href="#fields"><code>fields</code></a></a>&gt;</li>
