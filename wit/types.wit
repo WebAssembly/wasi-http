@@ -73,6 +73,7 @@ interface types {
     HTTP-response-transfer-coding(option<string>),
     HTTP-response-content-coding(option<string>),
     HTTP-response-timeout,
+    HTTP-response-status-invalid,
     HTTP-upgrade-failed,
     HTTP-protocol-error,
     loop-detected,
