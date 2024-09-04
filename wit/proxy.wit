@@ -26,6 +26,11 @@ world imports {
   @since(version = 0.2.0)
   import wasi:cli/stdin@0.2.1;
 
+  /// HTTP proxies to read runtime configurations such as environment variables,
+  /// API keys, and other configuration data.
+  @unstable(feature = config)
+  import wasi:config/runtime@0.2.0-draft;
+
   /// This is the default handler to use when user code simply wants to make an
   /// HTTP request (e.g., via `fetch()`).
   @since(version = 0.2.0)

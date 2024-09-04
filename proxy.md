@@ -16,6 +16,7 @@ outgoing HTTP requests.</p>
 <li>interface <a href="#wasi_cli_stdout_0_2_1"><code>wasi:cli/stdout@0.2.1</code></a></li>
 <li>interface <a href="#wasi_cli_stderr_0_2_1"><code>wasi:cli/stderr@0.2.1</code></a></li>
 <li>interface <a href="#wasi_cli_stdin_0_2_1"><code>wasi:cli/stdin@0.2.1</code></a></li>
+<li>interface <a href="#wasi_config_runtime_0_2_0_draft"><code>wasi:config/runtime@0.2.0-draft</code></a></li>
 <li>interface <a href="#wasi_http_outgoing_handler_0_2_1"><code>wasi:http/outgoing-handler@0.2.1</code></a></li>
 </ul>
 </li>
@@ -191,6 +192,8 @@ when it does, they are expected to subsume this API.</p>
 <p><a id="stream_error.last_operation_failed"></a><code>last-operation-failed</code>: own&lt;<a href="#error"><a href="#error"><code>error</code></a></a>&gt;</p>
 <p>The last operation (a write or flush) failed before completion.
 <p>More information is available in the <a href="#error"><code>error</code></a> payload.</p>
+<p>After this, the stream will be closed. All future operations return
+<a href="#stream_error.closed"><code>stream-error::closed</code></a>.</p>
 </li>
 <li>
 <p><a id="stream_error.closed"></a><code>closed</code></p>
@@ -523,7 +526,7 @@ their headers, trailers, and bodies.</p>
 <p>This type corresponds to HTTP standard Methods.</p>
 <h5>Variant Cases</h5>
 <ul>
-<li><a id="method.get"></a><code>get</code></li>
+<li><a id="method.get"></a><a href="#get"><code>get</code></a></li>
 <li><a id="method.head"></a><code>head</code></li>
 <li><a id="method.post"></a><code>post</code></li>
 <li><a id="method.put"></a><code>put</code></li>
@@ -1235,7 +1238,7 @@ This function will trap if the <a href="#input_stream"><code>input-stream</code>
 <h4><a id="method_future_trailers_subscribe"></a><code>[method]future-trailers.subscribe: func</code></h4>
 <p>Returns a pollable which becomes ready when either the trailers have
 been received, or an error has occurred. When this pollable is ready,
-the <code>get</code> method will return <code>some</code>.</p>
+the <a href="#get"><code>get</code></a> method will return <code>some</code>.</p>
 <h5>Params</h5>
 <ul>
 <li><a id="method_future_trailers_subscribe.self"></a><code>self</code>: borrow&lt;<a href="#future_trailers"><a href="#future_trailers"><code>future-trailers</code></a></a>&gt;</li>
@@ -1370,7 +1373,7 @@ Content-Length.</p>
 <h4><a id="method_future_incoming_response_subscribe"></a><code>[method]future-incoming-response.subscribe: func</code></h4>
 <p>Returns a pollable which becomes ready when either the Response has
 been received, or an error has occurred. When this pollable is ready,
-the <code>get</code> method will return <code>some</code>.</p>
+the <a href="#get"><code>get</code></a> method will return <code>some</code>.</p>
 <h5>Params</h5>
 <ul>
 <li><a id="method_future_incoming_response_subscribe.self"></a><code>self</code>: borrow&lt;<a href="#future_incoming_response"><a href="#future_incoming_response"><code>future-incoming-response</code></a></a>&gt;</li>
@@ -1511,6 +1514,47 @@ represented as a <code>u64</code>.</p>
 <h5>Return values</h5>
 <ul>
 <li><a id="get_stdin.0"></a> own&lt;<a href="#input_stream"><a href="#input_stream"><code>input-stream</code></a></a>&gt;</li>
+</ul>
+<h2><a id="wasi_config_runtime_0_2_0_draft"></a>Import interface wasi:config/runtime@0.2.0-draft</h2>
+<hr />
+<h3>Types</h3>
+<h4><a id="config_error"></a><code>variant config-error</code></h4>
+<p>An error type that encapsulates the different errors that can occur fetching config</p>
+<h5>Variant Cases</h5>
+<ul>
+<li>
+<p><a id="config_error.upstream"></a><code>upstream</code>: <code>string</code></p>
+<p>This indicates an error from an "upstream" config source.
+As this could be almost _anything_ (such as Vault, Kubernetes ConfigMaps, KeyValue buckets, etc),
+the error message is a string.
+</li>
+<li>
+<p><a id="config_error.io"></a><code>io</code>: <code>string</code></p>
+<p>This indicates an error from an I/O operation.
+As this could be almost _anything_ (such as a file read, network connection, etc),
+the error message is a string.
+Depending on how this ends up being consumed,
+we may consider moving this to use the `wasi:io/error` type instead.
+For simplicity right now in supporting multiple implementations, it is being left as a string.
+</li>
+</ul>
+<hr />
+<h3>Functions</h3>
+<h4><a id="get"></a><code>get: func</code></h4>
+<p>Gets a single opaque config value set at the given key if it exists</p>
+<h5>Params</h5>
+<ul>
+<li><a id="get.key"></a><code>key</code>: <code>string</code></li>
+</ul>
+<h5>Return values</h5>
+<ul>
+<li><a id="get.0"></a> result&lt;option&lt;<code>string</code>&gt;, <a href="#config_error"><a href="#config_error"><code>config-error</code></a></a>&gt;</li>
+</ul>
+<h4><a id="get_all"></a><code>get-all: func</code></h4>
+<p>Gets a list of all set config data</p>
+<h5>Return values</h5>
+<ul>
+<li><a id="get_all.0"></a> result&lt;list&lt;(<code>string</code>, <code>string</code>)&gt;, <a href="#config_error"><a href="#config_error"><code>config-error</code></a></a>&gt;</li>
 </ul>
 <h2><a id="wasi_http_outgoing_handler_0_2_1"></a>Import interface wasi:http/outgoing-handler@0.2.1</h2>
 <p>This interface defines a handler of outgoing HTTP Requests. It should be

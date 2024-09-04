@@ -21,3 +21,4 @@ jobs:
         wasm-tools: '1.215.0'
         wit-bindgen: '0.30.0'
         worlds: 'imports proxy'
+        features: 'config'

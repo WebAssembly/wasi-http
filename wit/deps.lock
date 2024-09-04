@@ -8,15 +8,20 @@ url = "https://github.com/WebAssembly/wasi-clocks/archive/main.tar.gz"
 sha256 = "ea9d69ee803bc176e23e5268f5e24a2ac485dd1f62a0ab4c748e9d3f901f576f"
 sha512 = "5efc22927c46cd56c41e5549ec775561c7fac2ea0d365abc0b55396d9475a7c9f984077a81f84a44a726f1c008fd2fadbffffa4fa53ecd5fbfd05afd379ab428"
 
+[config]
+url = "https://github.com/WebAssembly/wasi-runtime-config/archive/main.tar.gz"
+sha256 = "9148c06861712b69170af7b8ec37896b4104297d920fdec9f3bcc0b1eee4a5c8"
+sha512 = "25a54101620f279c835b39f56f6dbf8a92b374b6faaf6cf6aaa1ea06d8b97b9b79788cf8abd9c2ad0c11e3629dba6a2513b71f2c54b9f95027054ae54a4615b8"
+
 [filesystem]
 url = "https://github.com/WebAssembly/wasi-filesystem/archive/main.tar.gz"
-sha256 = "cfe8c420e8b857de612ae2a3336680dae16b95c93c8ba3a6ff05b21210966740"
-sha512 = "3c00c5544a58658e3e8025677091685286027fd49f37abf198c30b4e83b9e68f19723975aaa98794fba9f425ae9ef4f3dc0f5b9cf59203b5ecfaadf62b296f9a"
+sha256 = "c8f6224d2c7ac8dd0d0b94f637439226f8010a929abfe6bc7fee52cc325f378b"
+sha512 = "90aa55351ca9d7a582e115f3f2cea87f0bd3937d5b115ff00f21ca2c0056d0f3f91fe5c500ca3515bc477b58e10bb5c9c783d7cda8efad23c2466d2a475d8303"
 
 [io]
 url = "https://github.com/WebAssembly/wasi-io/archive/main.tar.gz"
-sha256 = "2a74bd811adc46b5a0f19827ddbde89870e52b17615f4d0873f06fd977250caf"
-sha512 = "94624f00c66e66203592cee820f80b1ba91ecdb71f682c154f25eaf71f8d8954197dcb64503bc21e72ed5e812af7eae876df47b7eb727b02db3a74a7ce0aefca"
+sha256 = "47d2cfaacb3648de9b0b3458e87363d21e28440506036e8f32896129b7512f9b"
+sha512 = "594ce1a78fda400de47a45044308472e7ea5f37a8e6a5d2fa28b067a8e2d0954dd84d4b1d764b1c343935bb2b24e89364e82deaa17e97bbb5cbf1667bad1202c"
 
 [random]
 url = "https://github.com/WebAssembly/wasi-random/archive/main.tar.gz"
