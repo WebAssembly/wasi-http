@@ -34,6 +34,16 @@ interface types {
     HTTPS,
     other(string)
   }
+  }
+
+  /// This type corresponds to HTTP protocol versions.
+  @since(version = 0.2.2)
+  variant http-version {
+    HTTP11,
+    HTTP2,
+    HTTP3
+    other(string)
+  }
 
   /// These cases are inspired by the IANA HTTP Proxy Error Types:
   ///   https://www.iana.org/assignments/http-proxy-status/http-proxy-status.xhtml#table-http-proxy-error-types
@@ -149,9 +159,9 @@ interface types {
   ///
   /// Field keys should always be treated as case insensitive by the `fields`
   /// resource for the purposes of equality checking.
-  /// 
+  ///
   /// # Deprecation
-  /// 
+  ///
   /// This type has been deprecated in favor of the `field-name` type.
   @since(version = 0.2.0)
   @deprecated(version = 0.2.2)
@@ -272,6 +282,10 @@ interface types {
   /// Represents an incoming HTTP Request.
   @since(version = 0.2.0)
   resource incoming-request {
+
+    /// Returns the HTTP version of the incoming request.
+    @since(version = 0.2.2)
+    http-version: func() -> http-version;
 
     /// Returns the method of the incoming request.
     @since(version = 0.2.0)
@@ -459,6 +473,10 @@ interface types {
   /// Represents an incoming HTTP Response.
   @since(version = 0.2.0)
   resource incoming-response {
+
+    /// Returns the HTTP version of the incoming request.
+    @since(version = 0.2.2)
+    http-version: func() -> http-version;
 
     /// Returns the status code from the incoming response.
     @since(version = 0.2.0)
