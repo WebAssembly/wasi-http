@@ -1,9 +1,10 @@
-package wasi:http@0.2.1;
+package wasi:http@0.2.2;
 
-/// The `wasi:http/imports` world imports all the APIs for HTTP proxies.
+/// The `wasi:http/imports-no-handler` world imports all the APIs for HTTP proxies
+/// except for the `outgoing-handler`.
 /// It is intended to be `include`d in other worlds.
-@since(version = 0.2.0)
-world imports {
+@since(version = 0.2.2)
+world imports-no-handler {
   /// HTTP proxies have access to time and randomness.
   @since(version = 0.2.0)
   import wasi:clocks/monotonic-clock@0.2.1;
@@ -25,6 +26,14 @@ world imports {
   /// when this import is properly removed.
   @since(version = 0.2.0)
   import wasi:cli/stdin@0.2.1;
+}
+
+/// The `wasi:http/imports` world imports all the APIs for HTTP proxies.
+/// It is intended to be `include`d in other worlds.
+@since(version = 0.2.0)
+world imports {
+  @since(version = 0.2.0)
+  include imports-no-handler;
 
   /// This is the default handler to use when user code simply wants to make an
   /// HTTP request (e.g., via `fetch()`).
@@ -36,6 +45,8 @@ world imports {
 /// hosts that includes HTTP forward and reverse proxies. Components targeting
 /// this world may concurrently stream in and out any number of incoming and
 /// outgoing HTTP requests.
+/// `wasi:http/proxy` doesn't specify the HTTP version to be used, leaving that
+/// decision to the host.
 @since(version = 0.2.0)
 world proxy {
   @since(version = 0.2.0)
@@ -47,4 +58,30 @@ world proxy {
   /// thus a component must be able to handle 0..N calls to `handle`.
   @since(version = 0.2.0)
   export incoming-handler;
+}
+
+/// The `wasi:http/http2-proxy` world captures a widely-implementable intersection of
+/// hosts that includes HTTP/2 forward and reverse proxies. Components targeting
+/// this world may concurrently stream in and out any number of incoming and
+/// outgoing HTTP requests.
+/// In difference to `wasi:http/proxy`, `wasi:http/http2-proxy` specifies that exactly
+/// HTTP/2 must be used, making it usable for scenarios that require HTTP/2.
+/// In particular, gRPC must use HTTP/2 as the transport, so gRPC clients and servers
+/// should target this world.
+@since(version = 0.2.2)
+world http2-proxy {
+  @since(version = 0.2.2)
+  include imports-no-handler;
+
+  /// This is the default handler to use when user code simply wants to make an
+  /// HTTP request (e.g., via `fetch()`).
+  @since(version = 0.2.2)
+  import http2-outgoing-handler;
+
+  /// The host delivers incoming HTTP requests to a component by calling the
+  /// `handle` function of this exported interface. A host may arbitrarily reuse
+  /// or not reuse component instance when delivering incoming HTTP requests and
+  /// thus a component must be able to handle 0..N calls to `handle`.
+  @since(version = 0.2.2)
+  export http2-incoming-handler;
 }
