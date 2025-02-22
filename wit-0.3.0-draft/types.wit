@@ -260,7 +260,7 @@ interface types {
     /// are fully transmitted.
     new-with-trailers: static func(
       %stream: stream<u8>,
-      trailers: future<option<trailers>>
+      trailers: future<trailers>
     ) -> tuple<body, future<result<_, error-code>>>;
 
     /// Returns the contents of the body, as a stream of bytes.
