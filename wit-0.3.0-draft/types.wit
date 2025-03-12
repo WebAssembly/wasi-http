@@ -354,13 +354,6 @@ interface types {
     /// component by e.g. `handler.handle`.
     headers: func() -> headers;
 
-    /// Get the body associated with the Request, if any.
-    ///
-    /// This body resource is a child: it must be dropped before the parent
-    /// `request` is dropped, or its ownership is transferred to another
-    /// component by e.g. `handler.handle`.
-    body: func() -> option<body>;
-
     /// Takes ownership of the `request` and returns the `headers` and `body`,
     /// if any.
     into-parts: static func(this: request) -> tuple<headers, option<body>>;
@@ -436,13 +429,6 @@ interface types {
     /// `response` is dropped, or its ownership is transferred to another
     /// component by e.g. `handler.handle`.
     headers: func() -> headers;
-
-    /// Get the body associated with the Response, if any.
-    ///
-    /// This body resource is a child: it must be dropped before the parent
-    /// `response` is dropped, or its ownership is transferred to another
-    /// component by e.g. `handler.handle`.
-    body: func() -> option<body>;
 
     /// Takes ownership of the `response` and returns the `headers` and `body`,
     /// if any.
