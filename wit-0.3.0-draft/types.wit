@@ -356,6 +356,8 @@ interface types {
 
     /// Get the body associated with the Request, if any.
     ///
+    /// After being called once, consequent calls with return `none`.
+    ///
     /// This body resource is a child: it must be dropped before the parent
     /// `request` is dropped, or its ownership is transferred to another
     /// component by e.g. `handler.handle`.
@@ -438,6 +440,8 @@ interface types {
     headers: func() -> headers;
 
     /// Get the body associated with the Response, if any.
+    ///
+    /// After being called once, consequent calls with return `none`.
     ///
     /// This body resource is a child: it must be dropped before the parent
     /// `response` is dropped, or its ownership is transferred to another
