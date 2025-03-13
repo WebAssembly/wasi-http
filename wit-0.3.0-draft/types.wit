@@ -357,10 +357,6 @@ interface types {
     ///
     /// The returned `headers` resource is immutable: `set`, `append`, and
     /// `delete` operations will fail with `header-error.immutable`.
-    ///
-    /// This headers resource is a child: it must be dropped before the parent
-    /// `request` is dropped, or its ownership is transferred to another
-    /// component by e.g. `handler.handle`.
     headers: func() -> headers;
 
     /// Get the body associated with the Request, if any.
@@ -457,10 +453,6 @@ interface types {
     ///
     /// The returned `headers` resource is immutable: `set`, `append`, and
     /// `delete` operations will fail with `header-error.immutable`.
-    ///
-    /// This headers resource is a child: it must be dropped before the parent
-    /// `response` is dropped, or its ownership is transferred to another
-    /// component by e.g. `handler.handle`.
     headers: func() -> headers;
 
     /// Get the body associated with the Response, if any.
