@@ -265,17 +265,26 @@ interface types {
 
     /// Returns the contents of the body, as a stream of bytes.
     ///
-    /// This function may be called multiple times as long as any `stream`s
-    /// returned by previous calls have been dropped first.
-    ///
-    /// On success, this function returns a stream and a future, which will resolve
+    /// This function returns a stream and a future, which will resolve
     /// to an error code if receiving data from stream fails.
-    /// The returned future resolves to success if body is closed.
-    %stream: func() -> result<tuple<stream<u8>, future<result<_, error-code>>>>;
+    /// The returned future resolves to success if data section of the
+    /// body is fully consumed.
+    ///
+    /// The handles returned by this function are considered to be child
+    /// handles. Dropping the resource on which this function is called
+    /// will close the handles with an error context, if they are still open.
+    ///
+    /// This function may be called multiple times.
+    /// If it is called while either a stream or future returned by a previous 
+    /// call to this function is still open, those handles will be closed 
+    /// with an error context.
+    %stream: func() -> tuple<stream<u8>, future<result<_, error-code>>>;
 
     /// Takes ownership of `body`, and returns an unresolved optional `trailers` result.
     ///
-    /// This function will trap if a `stream` child is still alive.
+    /// Developers are encouraged to close any open handles returned by previous
+    /// calls to `stream`, if any, before calling this function,
+    /// but calling `finish` will close them with an error context.
     finish: static func(this: body) -> future<result<option<trailers>, error-code>>;
   }
 
@@ -356,13 +365,30 @@ interface types {
 
     /// Get the body associated with the Request, if any.
     ///
-    /// This body resource is a child: it must be dropped before the parent
-    /// `request` is dropped, or its ownership is transferred to another
-    /// component by e.g. `handler.handle`.
+    /// This body resource is a child: it must be dropped or consumed before
+    /// the parent `request` is dropped, or its ownership is transferred
+    /// to another component by e.g. `handler.handle`.
+    ///
+    /// Only a single body resource can be active at a time.
+    /// If this function is called before the body resource returned by
+    /// a previous call to this function is dropped, the previously-returned
+    /// body will be transitioned into an "error state" and all operations
+    /// on it will fail.
+    ///
+    /// In case, that a `body.finish` was called on the body returned by a previous
+    /// call to this function, this function returns `none`.
     body: func() -> option<body>;
 
     /// Takes ownership of the `request` and returns the `headers`, `body`
     /// and `request-options`, if any.
+    ///
+    /// The headers returned by this function are considered to be a clone of the headers
+    /// of the request. Changes to the `headers` returned by this function will not be reflected
+    /// in the immutable `headers` resources, that could have been acquired by calls to `headers`
+    /// prior to this function being called.
+    ///
+    /// In case, that a `body.finish` was called on the body returned by a previous
+    /// call to `body`, this function returns body as `none`.
     into-parts: static func(this: request) -> tuple<headers, option<body>, option<request-options>>;
   }
 
@@ -439,13 +465,30 @@ interface types {
 
     /// Get the body associated with the Response, if any.
     ///
-    /// This body resource is a child: it must be dropped before the parent
-    /// `response` is dropped, or its ownership is transferred to another
-    /// component by e.g. `handler.handle`.
+    /// This body resource is a child: it should be dropped or consumed before
+    /// the parent `response` is dropped, or its ownership is transferred
+    /// to another component by e.g. `handler.handle`.
+    ///
+    /// Only a single body resource can be active at a time.
+    /// If this function is called before the body resource returned by
+    /// a previous call to this function is dropped, the previously-returned
+    /// body will be transitioned into an "error state" and all operations
+    /// on it will fail.
+    ///
+    /// In case, that a `body.finish` was called on the body returned by a previous
+    /// call to this function, this function returns `none`.
     body: func() -> option<body>;
 
     /// Takes ownership of the `response` and returns the `headers` and `body`,
     /// if any.
+    ///
+    /// The headers returned by this function are considered to be a clone of the headers
+    /// of the response. Changes to the `headers` returned by this function will not be reflected
+    /// in the immutable `headers` resources, that could have been acquired by calls to `headers`
+    /// prior to this function being called.
+    ///
+    /// In case, that a `body.finish` was called on the body returned by a previous
+    /// call to `body`, this function returns body as `none`.
     into-parts: static func(this: response) -> tuple<headers, option<body>>;
   }
 }
