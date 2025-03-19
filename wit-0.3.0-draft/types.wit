@@ -265,29 +265,28 @@ interface types {
 
     /// Returns the contents of the body, as a stream of bytes.
     ///
-    /// This function returns a stream and a future, which will resolve
+    /// This method returns a stream and a future, which will resolve
     /// to an error code if receiving data from stream fails.
     /// The returned future resolves to success if data section of the
     /// body is fully consumed.
     ///
-    /// The handles returned by this function are considered to be child
-    /// handles. Dropping the resource on which this function is called
+    /// The handles returned by this method are considered to be child
+    /// handles. Dropping the resource on which this method is called
     /// will close the handles with an error context, if they are still open.
     ///
-    /// This function may be called multiple times.
-    /// If it is called while either a stream or future returned by a previous 
-    /// call to this function is still open, those handles will be closed 
-    /// with an error context. Thus there will always be at most one readable stream
-    /// open for a given body. Each subsequent stream picks up where the last
-    /// stream left off, up until `finish` is called.
-    %stream: func() -> tuple<stream<u8>, future<result<_, error-code>>>;
+    /// This method may be called multiple times.
+    /// If it is called while either a stream or future returned by a previous
+    /// call to this method is still open, this method will return an error.
+    /// Thus there will always be at most one readable stream open for a given body.
+    /// Each subsequent stream picks up where the last stream left off,
+    /// up until `finish` is called.
+    %stream: func() -> result<tuple<stream<u8>, future<result<_, error-code>>>>;
 
     /// Takes ownership of `body`, and returns an unresolved optional `trailers` result.
     ///
-    /// Developers are encouraged to close any open handles returned by previous
-    /// calls to `stream`, if any, before calling this function,
-    /// but calling `finish` will close them with an error context.
-    finish: static func(this: body) -> future<result<option<trailers>, error-code>>;
+    /// If this function is called while either a stream or future returned by a previous
+    /// call to `body.stream` is still open, this function will return an error.
+    finish: static func(this: body) -> result<future<result<option<trailers>, error-code>>>;
   }
 
   /// Represents an HTTP Request.
@@ -368,14 +367,12 @@ interface types {
     /// to another component by e.g. `handler.handle`.
     ///
     /// Only a single body resource can be active at a time.
-    /// If this function is called before the body resource returned by
-    /// a previous call to this function is dropped, the previously-returned
-    /// body will be transitioned into an "error state" and all operations
-    /// on it will fail.
+    /// If this method is called before the body resource returned by
+    /// a previous call to this method is dropped, error will be returned.
     ///
     /// Once `body.finish` is called on a body returned by this method,
-    /// all subsequent calls to this method will return `none`.
-    body: func() -> option<body>;
+    /// all subsequent calls to this method will return `ok(none)`.
+    body: func() -> result<option<body>>;
 
     /// Takes ownership of the `request` and returns the `headers`, `body`
     /// and `request-options`, if any.
@@ -384,6 +381,8 @@ interface types {
     /// of the request. Changes to the `headers` returned by this function will not be reflected
     /// in the immutable `headers` resources, that could have been acquired by calls to `headers`
     /// prior to this method being called.
+    ///
+    /// If a body child exists when this function is called, an error will be returned.
     ///
     /// Once `body.finish` is called on a body returned by a previous
     /// call to `body` method, this method returns body as `none`.
@@ -464,14 +463,12 @@ interface types {
     /// to another component by e.g. `handler.handle`.
     ///
     /// Only a single body resource can be active at a time.
-    /// If this function is called before the body resource returned by
-    /// a previous call to this function is dropped, the previously-returned
-    /// body will be transitioned into an "error state" and all operations
-    /// on it will fail.
+    /// If this method is called before the body resource returned by
+    /// a previous call to this method is dropped, error will be returned.
     ///
     /// Once `body.finish` is called on a body returned by this method,
-    /// all subsequent calls to this method will return `none`.
-    body: func() -> option<body>;
+    /// all subsequent calls to this method will return `ok(none)`.
+    body: func() -> result<option<body>>;
 
     /// Takes ownership of the `response` and returns the `headers` and `body`,
     /// if any.
@@ -481,8 +478,10 @@ interface types {
     /// in the immutable `headers` resources, that could have been acquired by calls to `headers`
     /// prior to this method being called.
     ///
+    /// If a body child exists when this function is called, an error will be returned.
+    ///
     /// Once `body.finish` is called on a body returned by a previous
     /// call to `body` method, this method returns body as `none`.
-    into-parts: static func(this: response) -> tuple<headers, option<body>>;
+    into-parts: static func(this: response) -> result<tuple<headers, option<body>>>;
   }
 }
