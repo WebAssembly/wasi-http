@@ -277,7 +277,9 @@ interface types {
     /// This function may be called multiple times.
     /// If it is called while either a stream or future returned by a previous 
     /// call to this function is still open, those handles will be closed 
-    /// with an error context.
+    /// with an error context. Thus there will always be at most one readable stream
+    /// open for a given body. Each subsequent stream picks up where the last
+    /// stream left off, up until `finish` is called.
     %stream: func() -> tuple<stream<u8>, future<result<_, error-code>>>;
 
     /// Takes ownership of `body`, and returns an unresolved optional `trailers` result.
@@ -371,8 +373,8 @@ interface types {
     /// body will be transitioned into an "error state" and all operations
     /// on it will fail.
     ///
-    /// In case, that a `body.finish` was called on the body returned by a previous
-    /// call to this function, this function returns `none`.
+    /// Once `body.finish` is called on a body returned by this method,
+    /// all subsequent calls to this method will return `none`.
     body: func() -> option<body>;
 
     /// Takes ownership of the `request` and returns the `headers`, `body`
@@ -381,10 +383,10 @@ interface types {
     /// The headers returned by this function are considered to be a clone of the headers
     /// of the request. Changes to the `headers` returned by this function will not be reflected
     /// in the immutable `headers` resources, that could have been acquired by calls to `headers`
-    /// prior to this function being called.
+    /// prior to this method being called.
     ///
-    /// In case, that a `body.finish` was called on the body returned by a previous
-    /// call to `body`, this function returns body as `none`.
+    /// Once `body.finish` is called on a body returned by a previous
+    /// call to `body` method, this method returns body as `none`.
     into-parts: static func(this: request) -> tuple<headers, option<body>, option<request-options>>;
   }
 
@@ -467,8 +469,8 @@ interface types {
     /// body will be transitioned into an "error state" and all operations
     /// on it will fail.
     ///
-    /// In case, that a `body.finish` was called on the body returned by a previous
-    /// call to this function, this function returns `none`.
+    /// Once `body.finish` is called on a body returned by this method,
+    /// all subsequent calls to this method will return `none`.
     body: func() -> option<body>;
 
     /// Takes ownership of the `response` and returns the `headers` and `body`,
@@ -477,10 +479,10 @@ interface types {
     /// The headers returned by this function are considered to be a clone of the headers
     /// of the response. Changes to the `headers` returned by this function will not be reflected
     /// in the immutable `headers` resources, that could have been acquired by calls to `headers`
-    /// prior to this function being called.
+    /// prior to this method being called.
     ///
-    /// In case, that a `body.finish` was called on the body returned by a previous
-    /// call to `body`, this function returns body as `none`.
+    /// Once `body.finish` is called on a body returned by a previous
+    /// call to `body` method, this method returns body as `none`.
     into-parts: static func(this: response) -> tuple<headers, option<body>>;
   }
 }
