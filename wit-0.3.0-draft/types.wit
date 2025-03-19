@@ -240,27 +240,18 @@ interface types {
   /// trailers at any given time.
   resource body {
 
-    /// Construct a new `body` with the specified stream.
+    /// Construct a new `body` with the specified stream and `finish` future.
     ///
-    /// This function returns a future, which will resolve
-    /// to an error code if transmitting stream data fails.
+    /// The `finish` future must resolve to a result once `stream` has finished.
     ///
-    /// The returned future resolves to success once body stream
-    /// is fully transmitted.
+    /// This function returns a future, which will resolve to an error code if
+    /// transmitting of the request or response this body is a part of fails.
+    ///
+    /// The returned future resolves to success once request or response this
+    /// body is a part of is fully transmitted.
     new: static func(
       %stream: stream<u8>,
-    ) -> tuple<body, future<result<_, error-code>>>;
-
-    /// Construct a new `body` with the specified stream and trailers.
-    ///
-    /// This function returns a future, which will resolve
-    /// to an error code if transmitting stream data or trailers fails.
-    ///
-    /// The returned future resolves to success once body stream and trailers
-    /// are fully transmitted.
-    new-with-trailers: static func(
-      %stream: stream<u8>,
-      trailers: future<trailers>
+      finish: future<result<option<trailers>, error-code>>,
     ) -> tuple<body, future<result<_, error-code>>>;
 
     /// Returns the contents of the body, as a stream of bytes.
@@ -298,8 +289,7 @@ interface types {
     /// `none` values for `path-with-query`, `scheme`, and `authority`.
     ///
     /// * `headers` is the HTTP Headers for the Response.
-    /// * `body` is the optional contents of the body, possibly including
-    ///   trailers.
+    /// * `body` is the contents of the body, possibly including trailers.
     /// * `options` is optional `request-options` to be used if the request is
     ///   sent over a network connection.
     ///
@@ -310,7 +300,7 @@ interface types {
     /// to reject invalid constructions of `request`.
     constructor(
       headers: headers,
-      body: option<body>,
+      body: body,
       options: option<request-options>
     );
 
@@ -424,11 +414,10 @@ interface types {
     /// `set-status-code` method.
     ///
     /// * `headers` is the HTTP Headers for the Response.
-    /// * `body` is the optional contents of the body, possibly including
-    ///   trailers.
+    /// * `body` is the contents of the body, possibly including trailers.
     constructor(
       headers: headers,
-      body: option<body>,
+      body: body,
     );
 
     /// Get the HTTP Status Code for the Response.
