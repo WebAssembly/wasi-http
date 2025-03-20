@@ -275,17 +275,19 @@ interface types {
     /// will close the handles with an error context, if they are still open.
     ///
     /// This method may be called multiple times.
-    /// If it is called while either a stream or future returned by a previous
-    /// call to this method is still open, this method will return an error.
+    /// This method will return an error if it is called while either:
+    /// - a stream or future returned by a previous call to this method is still open
+    /// - `finish` was called on another instance of this `body` resource
     /// Thus there will always be at most one readable stream open for a given body.
     /// Each subsequent stream picks up where the last stream left off,
-    /// up until `finish` is called.
+    /// up until `finish` is called on any of the instances of this `body` resource
     %stream: func() -> result<tuple<stream<u8>, future<result<_, error-code>>>>;
 
     /// Takes ownership of `body`, and returns an unresolved optional `trailers` result.
     ///
-    /// If this function is called while either a stream or future returned by a previous
-    /// call to `body.stream` is still open, this function will return an error.
+    /// This function will return an error if it is called while either:
+    /// - a stream or future returned by a previous call to `body.stream` is still open
+    /// - `finish` was already called on another instance of this `body` resource
     finish: static func(this: body) -> result<future<result<option<trailers>, error-code>>>;
   }
 
@@ -366,27 +368,9 @@ interface types {
     /// the parent `request` is dropped, or its ownership is transferred
     /// to another component by e.g. `handler.handle`.
     ///
-    /// Only a single body resource can be active at a time.
-    /// If this method is called before the body resource returned by
-    /// a previous call to this method is dropped, error will be returned.
-    ///
     /// Once `body.finish` is called on a body returned by this method,
-    /// all subsequent calls to this method will return `ok(none)`.
-    body: func() -> result<option<body>>;
-
-    /// Takes ownership of the `request` and returns the `headers`, `body`
-    /// and `request-options`, if any.
-    ///
-    /// The headers returned by this function are considered to be a clone of the headers
-    /// of the request. Changes to the `headers` returned by this function will not be reflected
-    /// in the immutable `headers` resources, that could have been acquired by calls to `headers`
-    /// prior to this method being called.
-    ///
-    /// If a body child exists when this function is called, an error will be returned.
-    ///
-    /// Once `body.finish` is called on a body returned by a previous
-    /// call to `body` method, this method returns body as `none`.
-    into-parts: static func(this: request) -> tuple<headers, option<body>, option<request-options>>;
+    /// all subsequent calls to this method will return `none`.
+    body: func() -> option<body>;
   }
 
   /// Parameters for making an HTTP Request. Each of these parameters is
@@ -462,26 +446,8 @@ interface types {
     /// the parent `response` is dropped, or its ownership is transferred
     /// to another component by e.g. `handler.handle`.
     ///
-    /// Only a single body resource can be active at a time.
-    /// If this method is called before the body resource returned by
-    /// a previous call to this method is dropped, error will be returned.
-    ///
     /// Once `body.finish` is called on a body returned by this method,
-    /// all subsequent calls to this method will return `ok(none)`.
-    body: func() -> result<option<body>>;
-
-    /// Takes ownership of the `response` and returns the `headers` and `body`,
-    /// if any.
-    ///
-    /// The headers returned by this function are considered to be a clone of the headers
-    /// of the response. Changes to the `headers` returned by this function will not be reflected
-    /// in the immutable `headers` resources, that could have been acquired by calls to `headers`
-    /// prior to this method being called.
-    ///
-    /// If a body child exists when this function is called, an error will be returned.
-    ///
-    /// Once `body.finish` is called on a body returned by a previous
-    /// call to `body` method, this method returns body as `none`.
-    into-parts: static func(this: response) -> result<tuple<headers, option<body>>>;
+    /// all subsequent calls to this method will return `none`.
+    body: func() -> option<body>;
   }
 }
