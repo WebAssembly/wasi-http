@@ -407,6 +407,10 @@ interface types {
     /// body stream. An error return value indicates that this timeout is not
     /// supported or that this handle is immutable.
     set-between-bytes-timeout: func(duration: option<duration>) -> result<_, request-options-error>;
+
+    /// Make a deep copy of the `request-options`.
+    /// The resulting `request-options` is mutable.
+    clone: func() -> request-options;
   }
 
   /// This type corresponds to the HTTP standard Status Code.
