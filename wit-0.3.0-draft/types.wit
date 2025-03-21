@@ -322,12 +322,12 @@ interface types {
     ///
     /// This method may be called multiple times.
     ///
-    /// This method will return `none` if it is called while either:
+    /// This method will return an error if it is called while either:
     /// - a stream or future returned by a previous call to this method is still open
     /// - a stream returned by a previous call to this method has reported itself as closed
     /// Thus there will always be at most one readable stream open for a given body.
     /// Each subsequent stream picks up where the last stream left off, up until it is finished.
-    body: func() -> option<tuple<stream<u8>, future<result<option<trailers>, error-code>>>>;
+    body: func() -> result<tuple<stream<u8>, future<result<option<trailers>, error-code>>>>;
   }
 
   /// Parameters for making an HTTP Request. Each of these parameters is
@@ -421,11 +421,11 @@ interface types {
     ///
     /// This method may be called multiple times.
     ///
-    /// This method will return `none` if it is called while either:
+    /// This method will return an error if it is called while either:
     /// - a stream or future returned by a previous call to this method is still open
     /// - a stream returned by a previous call to this method has reported itself as closed
     /// Thus there will always be at most one readable stream open for a given body.
     /// Each subsequent stream picks up where the last stream left off, up until it is finished.
-    body: func() -> option<tuple<stream<u8>, future<result<option<trailers>, error-code>>>>;
+    body: func() -> result<tuple<stream<u8>, future<result<option<trailers>, error-code>>>>;
   }
 }
