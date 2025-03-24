@@ -238,7 +238,8 @@ interface types {
     ///
     /// `headers` is the HTTP Headers for the Request.
     ///
-    /// `contents` is the optional body content stream.
+    /// `contents` is the optional body content stream with `none`
+    /// representing a zero-length content stream.
     /// Once it is closed, `trailers` future must resolve to a result.
     /// If `trailers` resolves to an error, underlying connection
     /// will be closed immediately.
@@ -382,7 +383,8 @@ interface types {
     ///
     /// `headers` is the HTTP Headers for the Response.
     ///
-    /// `contents` is the optional body content stream.
+    /// `contents` is the optional body content stream with `none`
+    /// representing a zero-length content stream.
     /// Once it is closed, `trailers` future must resolve to a result.
     /// If `trailers` resolves to an error, underlying connection
     /// will be closed immediately.
