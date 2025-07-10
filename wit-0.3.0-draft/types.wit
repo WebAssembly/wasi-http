@@ -312,8 +312,8 @@ interface types {
     /// Get body of the Request.
     ///
     /// Stream returned by this method represents the contents of the body.
-    /// Once the stream is reported as closed, callers should await the returned future
-    /// to determine whether the body was received successfully.
+    /// Once the stream is reported as closed, callers should await the returned
+    /// future to determine whether the body was received successfully.
     /// The future will only resolve after the stream is reported as closed.
     ///
     /// The stream and future returned by this method are children:
@@ -327,8 +327,9 @@ interface types {
     /// - a stream or future returned by a previous call to this method is still open
     /// - a stream returned by a previous call to this method has reported itself as closed
     /// Thus there will always be at most one readable stream open for a given body.
-    /// Each subsequent stream picks up where the last stream left off, up until it is finished.
-    body: func() -> result<tuple<stream<u8>, future<result<option<trailers>, error-code>>>>;
+    /// Each subsequent stream picks up where the previous one left off,
+    /// continuing until the entire body has been consumed.
+    consume-body: func() -> result<tuple<stream<u8>, future<result<option<trailers>, error-code>>>>;
   }
 
   /// Parameters for making an HTTP Request. Each of these parameters is
@@ -412,8 +413,8 @@ interface types {
     /// Get body of the Response.
     ///
     /// Stream returned by this method represents the contents of the body.
-    /// Once the stream is reported as closed, callers should await the returned future
-    /// to determine whether the body was received successfully.
+    /// Once the stream is reported as closed, callers should await the returned
+    /// future to determine whether the body was received successfully.
     /// The future will only resolve after the stream is reported as closed.
     ///
     /// The stream and future returned by this method are children:
@@ -427,7 +428,8 @@ interface types {
     /// - a stream or future returned by a previous call to this method is still open
     /// - a stream returned by a previous call to this method has reported itself as closed
     /// Thus there will always be at most one readable stream open for a given body.
-    /// Each subsequent stream picks up where the last stream left off, up until it is finished.
-    body: func() -> result<tuple<stream<u8>, future<result<option<trailers>, error-code>>>>;
+    /// Each subsequent stream picks up where the previous one left off,
+    /// continuing until the entire body has been consumed.
+    consume-body: func() -> result<tuple<stream<u8>, future<result<option<trailers>, error-code>>>>;
   }
 }
