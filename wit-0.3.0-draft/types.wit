@@ -301,13 +301,13 @@ interface types {
     /// This `request-options` resource is a child: it must be dropped before
     /// the parent `request` is dropped, or its ownership is transferred to
     /// another component by e.g. `handler.handle`.
-    options: func() -> option<request-options>;
+    get-options: func() -> option<request-options>;
 
     /// Get the headers associated with the Request.
     ///
     /// The returned `headers` resource is immutable: `set`, `append`, and
     /// `delete` operations will fail with `header-error.immutable`.
-    headers: func() -> headers;
+    get-headers: func() -> headers;
 
     /// Get body of the Request.
     ///
@@ -407,7 +407,7 @@ interface types {
     ///
     /// The returned `headers` resource is immutable: `set`, `append`, and
     /// `delete` operations will fail with `header-error.immutable`.
-    headers: func() -> headers;
+    get-headers: func() -> headers;
 
     /// Get body of the Response.
     ///
