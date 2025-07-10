@@ -216,10 +216,10 @@ interface types {
     ///
     /// The names and values are always returned in the original casing and in
     /// the order in which they will be serialized for transport.
-    entries: func() -> list<tuple<field-name,field-value>>;
+    copy-all: func() -> list<tuple<field-name,field-value>>;
 
     /// Make a deep copy of the Fields. Equivalent in behavior to calling the
-    /// `fields` constructor on the return value of `entries`. The resulting
+    /// `fields` constructor on the return value of `copy-all`. The resulting
     /// `fields` is mutable.
     clone: func() -> fields;
   }
