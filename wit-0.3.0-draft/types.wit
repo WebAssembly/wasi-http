@@ -60,6 +60,7 @@ interface types {
     HTTP-response-trailer-size(field-size-payload),
     HTTP-response-transfer-coding(option<string>),
     HTTP-response-content-coding(option<string>),
+    HTTP-response-status-invalid,
     HTTP-response-timeout,
     HTTP-upgrade-failed,
     HTTP-protocol-error,
