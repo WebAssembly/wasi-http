@@ -75,8 +75,198 @@ interface types {
 
   /// Defines the case payload type for `DNS-error` above:
   record DNS-error-payload {
-    rcode: option<string>,
-    info-code: option<u16>
+    /// The DNS RCODE value, if known.
+    rcode: option<DNS-RCODE>,
+
+    /// The DNS INFO-CODE value, if known.
+    info-code: option<DNS-INFO-CODE>,
+
+    /// An information error message, if available.
+    ///
+    /// This may contain either the [RFC 8914] EXTRA-TEXT value if one is
+    /// present and available, or an implementation-specific error message.
+    ///
+    /// As in the RFC 8914 EXTRA-TEXT specification, this information is
+    /// intended for human consumption (not automated parsing). And, care
+    /// should be taken not to include private information that an observer
+    /// would not otherwise have access to, such as account numbers.
+    ///
+    /// [RFC 8914]: https://www.rfc-editor.org/rfc/rfc8914.html
+    extra-text: option<string>,
+  }
+
+  /// DNS RCODEs
+  ///
+  /// These correspond to [DNS RCODE values].
+  ///
+  /// [DNS RCODE values]: https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml#dns-parameters-6
+  enum DNS-RCODE {
+    /// `NoError`: No Error (RFC1035)
+    no-error,
+
+    /// `FormErr`: Format Error (RFC1035)
+    form-err,
+
+    /// `ServFail`: Server Failure (RFC1035)
+    serv-fail,
+
+    /// `NXDomain`: Non-Existent Domain (RFC1035)
+    NX-domain,
+
+    /// `NotImp`: Not Implemented (RFC1035)
+    not-imp,
+
+    /// `Refused`: Query Refused (RFC1035)
+    refused,
+
+    /// `YXDomain`: Name Exists when it should not (RFC2136](RFC6672)
+    YX-domain,
+
+    /// `YXRRSet`: RR Set Exists when it should not (RFC2136)
+    YX-RR-set,
+
+    /// `NXRRSet`: RR Set that should exist does not (RFC2136)
+    NX-RR-set,
+
+    /// `NotAuth`: Not Authorized (RFC8945)
+    ///
+    /// Alternatively:
+    ///
+    /// `NotAuth`: Server Not Authoritative for zone (RFC2136)
+    not-auth,
+
+    /// `NotZone`: Name not contained in zone (RFC2136)
+    not-zone,
+
+    /// `DSOTYPENI`: DSO-TYPE Not Implemented (RFC8490)
+    DSO-TYPE-NI,
+
+    /// `BADVERS`: Bad OPT Version (RFC6891)
+    BADVERS,
+
+    /// `BADSIG`: TSIG Signature Failure (RFC8945)
+    BADSIG,
+
+    /// `BADKEY`: Key not recognized (RFC8945)
+    BADKEY,
+
+    /// `BADTIME`: Signature out of time window (RFC8945)
+    BADTIME,
+
+    /// `BADMODE`: Bad TKEY Mode (RFC2930)
+    BADMODE,
+
+    /// `BADNAME`: Duplicate key name (RFC2930)
+    BADNAME,
+
+    /// `BADALG`: Algorithm not supported (RFC2930)
+    BADALG,
+
+    /// `BADTRUNC`: Bad Truncation (RFC8945)
+    BADTRUNC,
+
+    /// `BADCOOKIE`: Bad/missing Server Cookie (RFC7873)
+    BADCOOKIE,
+  }
+
+  /// Extended DNS Error Codes
+  ///
+  /// These correspond to [Extended DNS Error Codes], also known as `INFO-CODE`s.
+  ///
+  /// [Extended DNS Error Codes]: https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml#extended-dns-error-codes
+  enum DNS-INFO-CODE {
+    /// Other Error (RFC8914, Section 4.1)
+    other-error,
+
+    /// Unsupported DNSKEY Algorithm (RFC8914, Section 4.2)
+    unsupported-DNSKEY-algorithm,
+
+    /// Unsupported DS Digest Type (RFC8914, Section 4.3)
+    unsupported-DS-digest-type,
+
+    /// Stale Answer (RFC8914, Section 4.4][RFC8767)
+    stale-answer,
+
+    /// Forged Answer (RFC8914, Section 4.5)
+    forged-answer,
+
+    /// DNSSEC Indeterminate (RFC8914, Section 4.6)
+    DNSSEC-jndeterminate,
+
+    /// DNSSEC Bogus (RFC8914, Section 4.7)
+    DNSSEC-bogus,
+
+    /// Signature Expired (RFC8914, Section 4.8)
+    signature-expired,
+
+    /// Signature Not Yet Valid (RFC8914, Section 4.9)
+    signature-not-yet-valid,
+
+    /// DNSKEY Missing (RFC8914, Section 4.10)
+    DNSKEY-missing,
+
+    /// RRSIGs Missing (RFC8914, Section 4.11)
+    rrsigs-missing,
+
+    /// No Zone Key Bit Set (RFC8914, Section 4.12)
+    no-zone-key-bit-set,
+
+    /// NSEC Missing (RFC8914, Section 4.13)
+    NSEC-missing,
+
+    /// Cached Error (RFC8914, Section 4.14)
+    cached-error,
+
+    /// Not Ready (RFC8914, Section 4.15)
+    not-ready,
+
+    /// Blocked (RFC8914, Section 4.16)
+    blocked,
+
+    /// Censored (RFC8914, Section 4.17)
+    censored,
+
+    /// Filtered (RFC8914, Section 4.18)
+    filtered,
+
+    /// Prohibited (RFC8914, Section 4.19)
+    prohibited,
+
+    /// Stale NXDomain Answer (RFC8914, Section 4.20)
+    stale-NX-domain-answer,
+
+    /// Not Authoritative (RFC8914, Section 4.21)
+    not-authoritative,
+
+    /// Not Supported (RFC8914, Section 4.22)
+    not-supported,
+
+    /// No Reachable Authority (RFC8914, Section 4.23)
+    no-reachable-authority,
+
+    /// Network Error (RFC8914, Section 4.24)
+    network-error,
+
+    /// Invalid Data (RFC8914, Section 4.25)
+    invalid-data,
+
+    /// Signature Expired before Valid (https://github.com/NLnetLabs/unbound/pull/604#discussion_r802678343][Willem_Toorop)
+    signature-expired-before-valid,
+
+    /// Too Early (RFC9250)
+    too-early,
+
+    /// Unsupported NSEC3 Iterations Value (RFC9276)
+    unsupported-NSEC3-iterations-value,
+
+    /// Unable to conform to policy (draft-homburg-dnsop-codcp-00)
+    unable-to-conform-to-policy,
+
+    /// Synthesized (https://github.com/PowerDNS/pdns/pull/12334][Otto_Moerbeek)
+    synthesized,
+
+    /// Invalid Query Type (RFC9824)
+    invalid-query-type,
   }
 
   /// Defines the case payload type for `TLS-alert-received` above:
