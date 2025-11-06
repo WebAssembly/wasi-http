@@ -75,8 +75,10 @@ interface types {
 
   /// Defines the case payload type for `DNS-error` above:
   record DNS-error-payload {
-    rcode: option<string>,
-    info-code: option<u16>
+    /// An indication of the reason for the DNS error, if known.
+    ///
+    /// This string is meant only for human consumption, and not for machine parsing.
+    reason: option<string>,
   }
 
   /// Defines the case payload type for `TLS-alert-received` above:
